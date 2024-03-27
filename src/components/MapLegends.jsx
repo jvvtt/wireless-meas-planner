@@ -17,7 +17,7 @@ export function MapLegends () {
                 </div>
                 <div className='legends-info-item'>
                     <strong>Drone location</strong>
-                    <img className='img-info-item' id='dl-item' alt='DL' src='/drone-marker.png' />
+                    <img className='img-info-item' id='dl-item' alt='DL' src='public/drone-marker.png' />
                 </div>
                 <div className='legends-info-item'>
                     <strong>Ground location</strong>
