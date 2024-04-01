@@ -1,4 +1,6 @@
 import { createContext, useState } from "react"
+import {DRONE_HEADING_TYPES} from "../logic/utils.js"
+
 
 export const FiltersContext = createContext()
 
@@ -8,6 +10,8 @@ export function FiltersProvider ({children}){
         {
             droneSpeed: 0.1,
             gndSpeed: 10,
+            droneHeadingType:DRONE_HEADING_TYPES.NEXT_COORD,
+            gndActiveIdx: null 
         }
     )
 

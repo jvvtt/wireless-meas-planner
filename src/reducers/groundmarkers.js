@@ -38,9 +38,13 @@ export function reducer (state, action) {
             return newState
         }            
         case DRAW_ACTION_TYPES.EDIT_MARKER: {
-
-            return state
+            const newState = state
+            return newState
         }        
+        case DRAW_ACTION_TYPES.DELETE: {
+            const newState = []
+            return newState
+        }
     }
     return state
 }

@@ -1,11 +1,11 @@
 import { useContext } from "react"
 import { DroneMarkersContext } from "../context/dronemarkers.jsx"
 import { PDRSZonesContext } from "../context/pdrszones.jsx"
-import GeometryUtil from "leaflet-geometryutil"
 import { Polygon } from "react-leaflet"
 import { flight_geography_opts, contingency_volume_opts, ground_risk_buffer_opts } from "../constants/constants.js"
 import { DroneRegulationDefinitions } from "../logic/droneOperationsRules.js"
 import { computeRectangle } from "../logic/utils.js"
+import * as L from 'leaflet'
 
 export function FlightGeography () {
     const { markers } = useContext(DroneMarkersContext)
@@ -36,7 +36,7 @@ export function FlightGeography () {
 }
 
 
-export function FlightGeography2(){
+export function PDRAZones(){
     const { fgVertex, cvVertex, grbVertex } = useContext(PDRSZonesContext) 
     return (
         <>

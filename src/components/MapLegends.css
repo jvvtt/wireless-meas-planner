@@ -1,23 +1,37 @@
+@import url('non.geist');
+
 .legends-info {
-    width: 30%;
-    margin-top: 5rem;
-    margin-left: 2.5rem;
+    display: flex;
+    flex-direction: row;
+    border: 1px solid #e4e4e4;
+    border-radius: 5px;
+    background-color: #fffcfc;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
     text-align: center;
+    gap: 1em;
+    align-items: center;
+    justify-content: center;
 }
 
 .legends-info-item {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: right;
-    gap: 2rem;
-    margin-right: 3.5rem;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.legends-info-item span {
+    color: #464646;
+    font-family: 'Geist Variable';
+    font-weight: 200;
+    font-size: 15px;
 }
 
 .img-info-item{
-    justify-content: right;
+    justify-content: center;
 }
-
 
 #fg-item {
     background: rgb(45, 135, 236);
@@ -36,14 +50,14 @@
     height: 1rem;
 }
 
-#gl-item {
-    background-color: chocolate;
-}
-
 #dr-item {
     background-color: lime;
 }
 
 #dgyaw-item {
     background-color: red;
+}
+
+#dhead-item {
+    background-color: yellow;
 }

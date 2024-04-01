@@ -1,0 +1,61 @@
+@import url('non.geist');
+
+.coords-info-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    text-align: left;
+    width: 30%;
+    border-collapse: collapse;
+    font-family: system-ui;
+    margin: 0;
+    border-radius: 5px; 
+    background-color: #fffcfc;   
+}
+
+.coords-info-card-item {
+    background-color: #fff;
+    display: flex;
+    flex-direction: row;
+    gap: 0.1rem;
+    padding: 0.1rem 1rem;
+    margin: 0.2rem 1.5rem;
+    border: 1px solid #e4e4e4;
+    border-radius: 5px;    
+}
+
+.coords-info-card-item#lat{
+    margin-top: 1.5rem;
+}
+
+
+.coords-info-card-item label {
+    padding: 0.5rem 0.15rem;
+    font-weight: 200;
+    font-size: 16px;
+    color: #464646;
+    width: 70%;
+    text-align: left;
+    font-family: 'Geist Variable';
+}
+
+.coords-info-card-item span {
+    padding: 0.5rem 0.5rem;   
+    font-size: 16px;
+    color: #464646;
+    font-weight: 200;
+    width: 30%;
+    text-align: right;
+    font-family: 'Geist Variable';
+}
+
+.coords-info-card-inputs {
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0.1rem 1rem;
+    margin: 0.2rem 1.5rem;
+    border: 1px solid #e4e4e4;
+    border-radius: 5px;    
+}

@@ -3,13 +3,12 @@ import GeometryUtil from "leaflet-geometryutil"
 export const DRAW_ACTION_TYPES  = {
     ADD_MARKER: 'ADD_MARKER',
     EDIT_MARKER: 'EDIT_MARKER',
+    DELETE: 'DELETE_ALL'
 }
 
-const rad2deg = (rad) =>{
-    return rad*(180/Math.PI)
-}
-const deg2rad = (deg) => {
-    return deg*(Math.PI/180)
+export const DRONE_HEADING_TYPES = {
+    NEXT_COORD: "next-coordinate",
+    GROUND_NODE: "ground-node"
 }
 
 export const handleHoverMarker = (event, n_states, id_marker, table_id) => {
@@ -47,10 +46,7 @@ export const handleHoverMarker = (event, n_states, id_marker, table_id) => {
 export function yaw_from_bearings (b, a) {
     let y = 0;
     
-    if ((a > 0) && (b > 0) && (a < 90) & (b < 90) && (a > b)) {
-        y = a - b
-    }
-    else if ((a > 0) && (a < 90) && (b < 0) && (b < -90)) {
+    if ((a > 0) && (a < 90) && (b < 0) && (b < -90)) {
         y = 360 - (a - b)
     }
     else if ((a > 0) && (a > 90) && (b < 0) && (b < -90)) {
@@ -75,10 +71,15 @@ export function yaw_from_bearings (b, a) {
  */
 export function drone_yaw_to_set(droneCoords, groundCoords, droneHeading) {
 
-    const b = L.GeometryUtil.bearing(droneCoords, groundCoords)
-    //const a = L.GeometryUtil.bearing(droneCoords, droneHeading)
+    const b = GeometryUtil.bearing(droneCoords, groundCoords)
+    let yaw = yaw_from_bearings(b, droneHeading)
 
-    return yaw_from_bearings(b, droneHeading)
+    if (yaw > 180){
+        yaw = yaw - 360
+    } else if (yaw < -180){
+        yaw = yaw + 360
+    }
+    return yaw
 }
 
 /**
@@ -89,7 +90,7 @@ export function drone_yaw_to_set(droneCoords, groundCoords, droneHeading) {
  * @returns {number} - Bearing angle from this marker to the next marker on the map
  */
 export function drone_heading_to_next_marker(thisCoords, nextCoords) {
-    return L.GeometryUtil.bearing(thisCoords, nextCoords)
+    return GeometryUtil.bearing(thisCoords, nextCoords)
 }
 
 /**
@@ -135,15 +136,15 @@ const anglesForMarkersExtendedLimits = (beta) => {
  */
 
 export const computeRectangle = (d, thisCoords, nextCoords) => {
-    const beta = L.GeometryUtil.bearing(thisCoords, nextCoords) 
+    const beta = GeometryUtil.bearing(thisCoords, nextCoords) 
 
     const {ang_clockwise, ang_counterclockwise} = anglesForMarkersExtendedLimits(beta)
     
-    const this_point_clockwise = L.GeometryUtil.destination(thisCoords, ang_clockwise, d)
-    const this_point_counterclockwise = L.GeometryUtil.destination(thisCoords, ang_counterclockwise, d)
+    const this_point_clockwise = GeometryUtil.destination(thisCoords, ang_clockwise, d)
+    const this_point_counterclockwise = GeometryUtil.destination(thisCoords, ang_counterclockwise, d)
 
-    const next_point_clockwise = L.GeometryUtil.destination(nextCoords, ang_clockwise, d)
-    const next_point_counterclockwise = L.GeometryUtil.destination(nextCoords, ang_counterclockwise, d)
+    const next_point_clockwise = GeometryUtil.destination(nextCoords, ang_clockwise, d)
+    const next_point_counterclockwise = GeometryUtil.destination(nextCoords, ang_counterclockwise, d)
 
     return {this_point_clockwise, this_point_counterclockwise, next_point_clockwise, next_point_counterclockwise}
 }

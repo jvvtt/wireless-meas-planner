@@ -2,11 +2,12 @@ import './App.css'
 import { MapToInteract } from './components/MapToInteract'
 import { DroneMarkersProvider } from './context/dronemarkers.jsx'
 import { InfoCanvas } from './components/InfoCanvas'
-import { Filters } from './components/Filters.jsx'
 import { FiltersProvider } from './context/filters' 
 import { GroundMarkersProvider } from './context/groundmarkers.jsx'
 import { PDRSZonesProvider } from './context/pdrszones.jsx'
 import { saveAs } from 'file-saver';
+
+const infoCavasDevelopment = false
 
 function App() {
   const data = {
@@ -32,24 +33,26 @@ function App() {
 
   return (
     <GroundMarkersProvider>
-    <DroneMarkersProvider>
-      <header className='header-app'>
-        <h1>Wireless Channel Measurements Planner</h1>
-        <img src="public/vtt-logo.png" alt="VTT logo" />
-      </header>
-      <div className='body-content'>
-        <section className='open-info'>
-          <h2>Place the coordinates in the order the transceiver will follow</h2>
-        </section>
-        <PDRSZonesProvider>
-          <MapToInteract></MapToInteract>
-          <FiltersProvider>
-            <Filters></Filters>
-            <InfoCanvas></InfoCanvas>
-          </FiltersProvider>
-        </PDRSZonesProvider>
-      </div>
-    </DroneMarkersProvider>
+      <DroneMarkersProvider>
+        <header className='header-app'>
+          <h1>Wireless Channel Measurements Planner</h1>
+          <img src="public/vtt-logo.png" alt="VTT logo" />
+        </header>
+        <div className='body-content'>
+          <section className='open-info'>
+            <h2>Place the coordinates in the order the transceiver will follow</h2>
+            <p>For each ground marker location an experiment will be performed.</p>
+            <p>During an experiment the drone will move to the drone marker locations.</p>
+            <p>On each drone marker location a measurement will be carried out.</p>
+          </section>
+          <PDRSZonesProvider>
+            <FiltersProvider>
+              <MapToInteract></MapToInteract>
+              {infoCavasDevelopment && <InfoCanvas></InfoCanvas>}
+            </FiltersProvider>
+          </PDRSZonesProvider>
+        </div>
+      </DroneMarkersProvider>
     </GroundMarkersProvider>
   )
 }

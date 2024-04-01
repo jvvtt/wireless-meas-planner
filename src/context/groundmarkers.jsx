@@ -1,4 +1,4 @@
-import { createContext, useReducer } from "react";
+import { createContext, useReducer, useState } from "react";
 import { reducer, initialState } from "../reducers/groundmarkers.js";
 import { DRAW_ACTION_TYPES } from "../logic/utils.js"
 
@@ -17,13 +17,25 @@ function useGroundMarkerReducer() {
         payload: map
     })
 
-    return {state, onCreationGroundMarker, onEditGroundMarker}
+    const onDeleteGroundMarker = () => dispatch({
+        type: DRAW_ACTION_TYPES.DELETE,
+        payload: null
+    })
+
+    return {state, onCreationGroundMarker, onEditGroundMarker, onDeleteGroundMarker}
 }
 
 export function GroundMarkersProvider ({children}) {
-    const {state, onCreationGroundMarker, onEditGroundMarker} = useGroundMarkerReducer()
+    const [lastGndMarkerId, setLastGndMarkerId] = useState(0)
+    const {state, onCreationGroundMarker, onEditGroundMarker, onDeleteGroundMarker} = useGroundMarkerReducer()
+
     return(
-        <GroundMarkersContext.Provider value={{gndmarkers:state, onCreationGroundMarker, onEditGroundMarker}}>
+        <GroundMarkersContext.Provider value={{gndmarkers:state, 
+                                                onCreationGroundMarker, 
+                                                onEditGroundMarker, 
+                                                onDeleteGroundMarker,
+                                                lastGndMarkerId,
+                                                setLastGndMarkerId}}>
             {children}
         </GroundMarkersContext.Provider>
     )

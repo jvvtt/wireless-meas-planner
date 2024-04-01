@@ -1,4 +1,5 @@
 import { handleHoverMarker, DRAW_ACTION_TYPES } from "../logic/utils.js"
+import * as L from 'leaflet'
 
 export const initialState = []
 
@@ -7,11 +8,11 @@ const handleHoverDroneMarker = (e, n_states, id) => {
 }
 
 export const reducer = (state, action) => {
-    const {type: actionType, payload: this_map} = action
+    const {type: actionType, payload: this_payload} = action
     
     switch (actionType) {
         case DRAW_ACTION_TYPES.ADD_MARKER: {                    
-            const { layer } = this_map
+            const { layer } = this_payload
             const id = layer._leaflet_id
             const n_states = state.length
                     
@@ -50,7 +51,7 @@ export const reducer = (state, action) => {
             let newCoords = {lat: state[0].lat, lng: state[0].lng}
 
             // FIRST: Retrieve the marker that was moved and its new coords
-            for (const [, val] of Object.entries(this_map._layers)){
+            for (const [, val] of Object.entries(this_payload._layers)){
                 if (val._latlng === undefined) {
                     continue;
                 } else {
@@ -76,7 +77,7 @@ export const reducer = (state, action) => {
                     // Check the beginnig
                     case 0:
                         nextCoords = L.latLng(newState[idxMarkerChanged+1].lat, newState[idxMarkerChanged+1].lng)
-                        dist = this_map.distance(newCoords, nextCoords)
+                        dist = this_payload.distance(newCoords, nextCoords)
                         newState[idxMarkerChanged+1] = {
                             ...newState[idxMarkerChanged+1],
                             distToPrevious:dist,
@@ -85,7 +86,7 @@ export const reducer = (state, action) => {
                     // Check the end
                     case n_states - 1:
                         prevCoords = L.latLng(newState[idxMarkerChanged-1].lat, newState[idxMarkerChanged-1].lng)
-                        dist = this_map.distance(prevCoords, newCoords)
+                        dist = this_payload.distance(prevCoords, newCoords)
                         
                         newState[idxMarkerChanged] = {
                             ...newState[idxMarkerChanged],
@@ -96,14 +97,14 @@ export const reducer = (state, action) => {
                     default:       
                         prevCoords = L.latLng(newState[idxMarkerChanged-1].lat, newState[idxMarkerChanged-1].lng)
                         nextCoords = L.latLng(newState[idxMarkerChanged+1].lat, newState[idxMarkerChanged+1].lng)
-                        dist = this_map.distance(prevCoords, newCoords)
+                        dist = this_payload.distance(prevCoords, newCoords)
         
                         newState[idxMarkerChanged] = {
                             ...newState[idxMarkerChanged],
                             distToPrevious:dist,
                         } 
         
-                        dist = this_map.distance(newCoords, nextCoords)
+                        dist = this_payload.distance(newCoords, nextCoords)
                         newState[idxMarkerChanged+1] = {
                             ...newState[idxMarkerChanged+1],
                             distToPrevious:dist,
@@ -119,6 +120,11 @@ export const reducer = (state, action) => {
 
             return newState
         }         
+
+        case DRAW_ACTION_TYPES.DELETE: {
+            const newState = []
+            return newState
+        }
     }
     return state
 }
