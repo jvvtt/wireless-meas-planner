@@ -10,3 +10,6 @@ export const decimal_places = 5
 export const flight_geography_opts = {color: 'rgb(45, 135, 236)'}
 export const contingency_volume_opts = {color: 'rgb(251, 255, 0)'}
 export const ground_risk_buffer_opts = {color: 'rgb(168, 51, 204)'}
+
+// Drone battery drop with full payload (out system): 4.5% per 50 seconds
+export const battery_drop_ratio = 4.5/50

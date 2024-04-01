@@ -148,3 +148,25 @@ export const computeRectangle = (d, thisCoords, nextCoords) => {
 
     return {this_point_clockwise, this_point_counterclockwise, next_point_clockwise, next_point_counterclockwise}
 }
+
+/**
+ * Approximate distance between two coordinates, when not high precision is requried
+ * @param {*} lat1 
+ * @param {*} lon1 
+ * @param {*} lat2 
+ * @param {*} lon2 
+ * @returns 
+ */
+export function cosineDistanceBetweenPoints(lat1, lon1, lat2, lon2) {
+    const R = 6371e3;
+    const p1 = lat1 * Math.PI/180;
+    const p2 = lat2 * Math.PI/180;
+    const deltaP = p2 - p1;
+    const deltaLon = lon2 - lon1;
+    const deltaLambda = (deltaLon * Math.PI) / 180;
+    const a = Math.sin(deltaP/2) * Math.sin(deltaP/2) +
+              Math.cos(p1) * Math.cos(p2) *
+              Math.sin(deltaLambda/2) * Math.sin(deltaLambda/2);
+    const d = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * R;
+    return d;
+  }

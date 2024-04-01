@@ -6,6 +6,7 @@ import { FiltersProvider } from './context/filters'
 import { GroundMarkersProvider } from './context/groundmarkers.jsx'
 import { PDRSZonesProvider } from './context/pdrszones.jsx'
 import { saveAs } from 'file-saver';
+import { Dashboard } from './components/Dashboard.jsx'
 
 const infoCavasDevelopment = false
 
@@ -36,7 +37,7 @@ function App() {
       <DroneMarkersProvider>
         <header className='header-app'>
           <h1>Wireless Channel Measurements Planner</h1>
-          <img src="./public/vtt-logo.png" alt="VTT logo" />
+          <img src="public/vtt-logo.png" alt="VTT logo" />
         </header>
         <div className='body-content'>
           <section className='open-info'>
@@ -49,6 +50,7 @@ function App() {
             <FiltersProvider>
               <MapToInteract></MapToInteract>
               {infoCavasDevelopment && <InfoCanvas></InfoCanvas>}
+              <Dashboard></Dashboard>
             </FiltersProvider>
           </PDRSZonesProvider>
         </div>
