@@ -6,7 +6,7 @@ var iconTitle = [
   ];
   
   var iconUrl = [
-    '/public/drone-marker.png',
+    './public/drone-marker.png',
   ];
 
 export function CustomToolbar({children, drawOpts}) {
