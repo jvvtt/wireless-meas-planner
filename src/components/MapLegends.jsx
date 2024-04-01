@@ -16,7 +16,7 @@ export function MapLegends () {
                     <span>Ground Risk Buffer</span>
                 </div>
                 <div className='legends-info-item'>
-                    <img className='img-info-item' id='dl-item' alt='DL' src='public/drone-marker.png' />
+                    <img className='img-info-item' id='dl-item' alt='DL' src='/public/drone-marker.png' />
                     <span>Drone location</span>
                 </div>
                 <div className='legends-info-item'>
