@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@turf/turf": "^6.5.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
     "esri-leaflet": "^3.0.12",
     "esri-leaflet-geocoder": "^3.1.4",
     "file-saver": "^2.0.5",
@@ -18,11 +20,14 @@
     "leaflet": "^1.9.4",
     "leaflet-draw": "^1.0.4",
     "leaflet-geometryutil": "^0.10.3",
+    "lucide-react": "^0.364.0",
     "non.geist": "^1.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.1",
-    "react-leaflet-draw": "^0.20.4"
+    "react-leaflet-draw": "^0.20.4",
+    "tailwind-merge": "^2.2.2",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/react": "^18.2.64",
