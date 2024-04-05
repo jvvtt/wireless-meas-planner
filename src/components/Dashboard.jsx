@@ -10,15 +10,23 @@ import "chart.js/auto";
 export function Dashboard() {
   const { markers } = useContext(DroneMarkersContext);
   const { gndmarkers } = useContext(GroundMarkersContext);
-  const { filters, setFiltersState } = useFilters();
+  const { filters, setFiltersState, timeToPrevious } = useFilters();
   const [hoverTime, setHoverTime] = useState(60);
   const [avgDroneBatt, seAvgDroneBatt] = useState(4.5 / 50);
 
   const initialDroneBatteryDrop = 0;
-  let consumed_battery_time;
+  let consumed_battery_time = 0;
 
   const local_avg_drone_batt = avgDroneBatt;
   const local_drone_height = filters.droneHeight;
+
+  let totalFlightTime =
+    markers.length > 0
+      ? timeToPrevious(markers, "DRONE").reduce(
+          (accumulator, currentValue) => accumulator + currentValue + hoverTime,
+          initialDroneBatteryDrop
+        )
+      : 0;
 
   if (filters.gndActiveIdx !== null) {
     const dist_2D_gnd_first_drone_loc = cosineDistanceBetweenPoints(
@@ -43,26 +51,13 @@ export function Dashboard() {
       Math.pow(dist_2D_gnd_last_drone_loc, 2) + Math.pow(local_drone_height, 2)
     );
 
-    consumed_battery_time =
-      markers.reduce(
-        (accumulator, currentValue) =>
-          accumulator +
-          (currentValue.distToPrevious / filters.droneSpeed + hoverTime) *
-            local_avg_drone_batt,
-        initialDroneBatteryDrop
-      ) +
-      (dist_3D_gnd_first_drone_loc / filters.droneSpeed) *
-        local_avg_drone_batt +
-      (dist_3D_gnd_last_drone_loc / filters.droneSpeed) * local_avg_drone_batt;
-  } else {
-    consumed_battery_time = markers.reduce(
-      (accumulator, currentValue) =>
-        accumulator +
-        (currentValue.distToPrevious / filters.droneSpeed + hoverTime) *
-          local_avg_drone_batt,
-      initialDroneBatteryDrop
-    );
+    totalFlightTime =
+      totalFlightTime +
+      (dist_3D_gnd_first_drone_loc + dist_3D_gnd_last_drone_loc) /
+        filters.droneSpeed;
   }
+
+  consumed_battery_time = totalFlightTime * local_avg_drone_batt;
 
   const doughnutChartData = {
     labels: ["Dropped", "Remaining"],
@@ -106,7 +101,7 @@ export function Dashboard() {
           </div>
           <span className="text-left font-thin text-sm">
             {" "}
-            The drone will hover at the first location for the specified time.
+            The drone will hover at each location for the specified time.
           </span>
         </div>
         <div>
@@ -149,7 +144,15 @@ export function Dashboard() {
             onChange={(e) => seAvgDroneBatt(e.target.value)}
           ></input>
         </div>
-        <div className="flex flex-col gap-y-5 w-50">
+        <div className="flex flex-col gap-y-5 w-30">
+          <p className="text-center font-thin text-2xl text-wrap">
+            Total flight time [s]
+          </p>
+          <span className="text-center mx-auto font-thin text-xl">
+            {totalFlightTime.toFixed(2)}
+          </span>
+        </div>
+        <div className="flex flex-col gap-y-5 w-30">
           <p className="text-center font-thin text-2xl text-wrap">
             Drone consumed battery on the measurement
           </p>
