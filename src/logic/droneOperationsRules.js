@@ -1,4 +1,3 @@
-
 /*
 Source:
 https://www.iaa.ie/docs/default-source/publications/advisory-memoranda/uas-advisory-memoranda-(uam)/uam-008---guidance-on-defining-flight-geography-contingency-volume-and-ground-risk-buffer-issue-17fcf7d91c3ff6e66b7b5ff0000aadb04.pdf?sfvrsn=433013f3_6
@@ -58,52 +57,56 @@ const Hcv = Hfg + Hbaro + Hrz + Hcm
 // Lateral Ground Risk Buffer distance [m]
 const approach = "PDRS-01" 
 
-// Maximum Altitude above Ground Level (AGL) [m]
-const AGL = Hcv
+export function getPDRAdefinitions (droneHeight) {    
+    // Maximum Altitude above Ground Level (AGL) [m]
+    const AGL = droneHeight 
 
-let Sgrb = 0
-if (approach === "one-one-rule"){
-    Sgrb = Hcv + 0.5*CD
-}
-else if (approach === "ballistic"){
-    Sgrb = Vd*Math.sqrt(2*Hcv)/g + 0.5*CD
-}
-else if (approach === "PDRS-01"){
-    // These are for MTOM greater than 10 kg
-    if (AGL <= 10) {
-        Sgrb = 10
+    let Sgrb = 0
+    if (approach === "one-one-rule"){
+        Sgrb = Hcv + 0.5*CD
     }
-    else if ((AGL > 10) && (AGL <= 30)){
-        Sgrb = 20
+    else if (approach === "ballistic"){
+        Sgrb = Vd*Math.sqrt(2*Hcv)/g + 0.5*CD
     }
-    else if ((AGL > 30) && (AGL <= 60)){
-        Sgrb = 30
+    else if (approach === "PDRS-01"){
+        // These are for MTOM greater than 10 kg
+        if (AGL <= 10) {
+            Sgrb = 10
+        }
+        else if ((AGL > 10) && (AGL <= 30)){
+            Sgrb = 20
+        }
+        else if ((AGL > 30) && (AGL <= 60)){
+            Sgrb = 30
+        }
+        else if ((AGL > 60) && (AGL <= 90)){
+            Sgrb = 45
+        }
+        else if ((AGL > 90) && (AGL <= 120)){
+            Sgrb = 60
+        }
+        else if ((AGL > 120) && (AGL <= 150)){
+            Sgrb = 75
+        }
+        else {
+            alert("AGL should be lower than 90")
+        }
     }
-    else if ((AGL > 60) && (AGL <= 90)){
-        Sgrb = 45
+    
+    /* Visual Line Of Sight (VLoS)*/
+    
+    // Max. Attitude Line Of Sight [m]: Maximum distance at which a remote pilot can detect the position and orientation of the UAS.
+    const ALoS = 327*CD + 20
+    
+    /* Operations in VLoS required that the VLoS boundary is bigger than the contingecy volume (Sfg + Scv) */
+    
+    const DroneRegulationDefinitions = {
+        AGL: AGL,
+        Scv: Scv,
+        Hcv: Hcv,
+        Sgrb: Sgrb,
+        ALoS: ALoS
     }
-    else if ((AGL > 90) && (AGL <= 120)){
-        Sgrb = 60
-    }
-    else if ((AGL > 120) && (AGL <= 150)){
-        Sgrb = 75
-    }
-    else {
-        alert("AGL should be lower than 90")
-    }
-}
 
-/* Visual Line Of Sight (VLoS)*/
-
-// Max. Attitude Line Of Sight [m]: Maximum distance at which a remote pilot can detect the position and orientation of the UAS.
-const ALoS = 327*CD + 20
-
-/* Operations in VLoS required that the VLoS boundary is bigger than the contingecy volume (Sfg + Scv) */
-
-export const DroneRegulationDefinitions = {
-    AGL: AGL,
-    Scv: Scv,
-    Hcv: Hcv,
-    Sgrb: Sgrb,
-    ALoS: ALoS
+    return DroneRegulationDefinitions
 }

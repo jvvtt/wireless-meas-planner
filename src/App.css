@@ -26,10 +26,15 @@
 .open-info{
   justify-content: left;
   margin-top: 1rem;
+  font-family: 'Geist Variable';
+}
+
+.open-info p {
+  font-weight: 200;
 }
 
 .open-info h2 {
-  color:#000;
   font-family: 'Geist Variable';
   font-size: 25px;
+  font-weight: 200;
 }

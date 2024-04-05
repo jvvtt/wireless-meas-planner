@@ -45,6 +45,7 @@ function App() {
             <p>For each ground marker location an experiment will be performed.</p>
             <p>During an experiment the drone will move to the drone marker locations.</p>
             <p>On each drone marker location a measurement will be carried out.</p>
+            <p><strong>Click</strong> on the drone marker to see its relavant information on the right panel.</p>
           </section>
           <PDRSZonesProvider>
             <FiltersProvider>
