@@ -8,6 +8,7 @@ import { PDRSZonesProvider } from "./context/pdrszones.jsx";
 import { saveAs } from "file-saver";
 import { Dashboard } from "./components/Dashboard.jsx";
 import { OpenInfo } from "./components/OpenInfo";
+import { Scheduler } from "./components/Scheduler.jsx";
 
 const infoCavasDevelopment = false;
 
@@ -47,6 +48,7 @@ function App() {
               <MapToInteract></MapToInteract>
               {infoCavasDevelopment && <InfoCanvas></InfoCanvas>}
               <Dashboard></Dashboard>
+              <Scheduler></Scheduler>
             </FiltersProvider>
           </PDRSZonesProvider>
         </div>
