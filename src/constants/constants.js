@@ -15,8 +15,13 @@ export const ground_risk_buffer_opts = { color: "rgb(168, 51, 204)" };
 // Drone battery drop with full payload (out system): 4.5% per 50 seconds
 export const battery_drop_ratio = 4.5 / 50;
 
+const conservative_speed_drone_gimbal = 30; // in deg/s
+const speed_drone_gimbal = conservative_speed_drone_gimbal; // let's assume a conservative speed for the gimbal
+const speed_gnd_gimbal = speed_drone_gimbal; // both nodes use the same gimbal
+
 export const ACTION_TYPES = {
   DRONE_OPERATOR: {
+    NUMBER_ACTIONS: 2,
     MOVE: {
       NAME: "Move drone",
       SHORT_DESCRIPTION: (a, b, h) =>
@@ -28,24 +33,32 @@ export const ACTION_TYPES = {
     },
   },
   SOFTWARE_OPERATOR: {
+    NUMBER_ACTIONS: 4,
     START_RF: {
       NAME: "Start RF",
       SHORT: "RX listening incoming signals",
+      PRESET_DURATION: 5,
     },
     STOP_RF: {
       NAME: "Stop RF",
       SHORT: "RX stops listening incoming signals",
+      PRESET_DURATION: 5,
     },
     MOVE_DRONE_GIMBAL: {
       NAME: "Move drone gimbal",
       SHORT: "Rotate yaw and pitch of gimbal",
+      SPEED_DRONE_GIMBAL: speed_drone_gimbal,
+      PRESET_DURATION: (ang) => ang / speed_drone_gimbal,
     },
     MOVE_GND_GIMBAL: {
       NAME: "Move gnd gimbal",
       SHORT: "Rotate yaw and pitch of gimbal",
+      SPEED_GND_GIMBAL: speed_gnd_gimbal,
+      PRESET_DURATION: (ang) => ang / speed_gnd_gimbal,
     },
   },
   DRIVER_OPERATOR: {
+    NUMBER_ACTIONS: 2,
     MOVE: {
       NAME: "Move van",
       SHORT_DESCRIPTION: (a, b) => `From location ${a} to ${b}`,
@@ -53,6 +66,20 @@ export const ACTION_TYPES = {
     REST: {
       NAME: "Stop van",
       SHORT_DESCRIPTION: (a) => `At location ${a}`,
+    },
+  },
+  OBSERVER_OPERATOR: {
+    REPORT_AIRCRAFT: {
+      NAME: "Reports aircraft",
+      SHORT_DESCRIPTION: "Reports aircraft",
+    },
+    REPORT_BIRDS: {
+      NAME: "Reports birds",
+      SHORT_DESCRIPTION: "Reports birds",
+    },
+    REPORT_PEDESTRIAN: {
+      NAME: "Reports pedestrian",
+      SHORT_DESCRIPTION: "Pedestrians approaching",
     },
   },
   NO_ACTION: {
@@ -65,6 +92,7 @@ export const ACTORS = {
   DRONE_OPERATOR: "DRONE_OPERATOR",
   SOFTWARE_OPERATOR: "SOFTWARE_OPERATOR",
   DRIVER_OPERATOR: "DRIVER_OPERATOR",
+  OBSERVER_OPERATOR: "OBSERVER_OPERATOR",
 };
 
 export const ACTIONS_DURATION_CONSTANTS = {

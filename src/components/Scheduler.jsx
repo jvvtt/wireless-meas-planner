@@ -61,7 +61,7 @@ function PresetDroneOperatorActionCards() {
 
   return (
     <div className="flex flex-col">
-      {initialSchedulerState.map((state, cnt) => {
+      {initialSchedulerState.DRONE_OPERATOR.map((state, cnt) => {
         return (
           <ActionCard
             key={cnt}
@@ -122,7 +122,7 @@ function TimeCardsContainer({ initialDatetime }) {
 
   return (
     <div className="flex flex-col mb-2 gap-y-8">
-      {initialSchedulerState.map((state, cnt) => {
+      {initialSchedulerState.DRONE_OPERATOR.map((state, cnt) => {
         startTime = previousTime;
         endTime = convertSeconds(startTime, state.actionDuration);
         previousTime = endTime;
