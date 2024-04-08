@@ -1,8 +1,6 @@
-@import url('non.geist');
+@import url("non.geist");
 .body-content {
-  max-width: 1680px;
+  max-width: 1360px;
   margin: 0 auto;
   padding: 2rem;
 }
-
-

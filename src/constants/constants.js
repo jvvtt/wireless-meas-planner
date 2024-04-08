@@ -19,7 +19,8 @@ export const ACTION_TYPES = {
   DRONE_OPERATOR: {
     MOVE: {
       NAME: "Move drone",
-      SHORT_DESCRIPTION: (a, b, h) => `From location ${a} to ${b} @ height ${h}`,
+      SHORT_DESCRIPTION: (a, b, h) =>
+        `From location ${a} to ${b} @ height ${h}`,
     },
     HOVER: {
       NAME: "Hover drone",
@@ -53,6 +54,10 @@ export const ACTION_TYPES = {
       NAME: "Stop van",
       SHORT_DESCRIPTION: (a) => `At location ${a}`,
     },
+  },
+  NO_ACTION: {
+    NAME: "No action",
+    SHORT_DESCRIPTION: "This actor doesn't act",
   },
 };
 
