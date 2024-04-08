@@ -1,5 +1,5 @@
 import './MapLegends.css'
-
+import drone_marker from "../assets/drone-marker.png"
 export function MapLegends () {
     return (
             <section className='legends-info'>
@@ -16,7 +16,7 @@ export function MapLegends () {
                     <span>Ground Risk Buffer</span>
                 </div>
                 <div className='legends-info-item'>
-                    <img className='img-info-item' id='dl-item' alt='DL' src='public/drone-marker.png' />
+                    <img className='img-info-item' id='dl-item' alt='DL' src={drone_marker} />
                     <span>Drone location</span>
                 </div>
                 <div className='legends-info-item'>
