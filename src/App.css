@@ -5,36 +5,4 @@
   padding: 2rem;
 }
 
-.header-app {
-  display: flex;
-  gap: 1em;
-  justify-content: center;
-  color: #fff;
-  font-weight: bold;
-  font-family: 'Geist Variable';
-  font-size:2rem;
-  background-color: rgb(255, 109, 25);
-  margin: 0px;
-  padding: 1rem;
-  align-items: center;
-}
 
-.header-app img {
-  padding-left: 12em;
-}
-
-.open-info{
-  justify-content: left;
-  margin-top: 1rem;
-  font-family: 'Geist Variable';
-}
-
-.open-info p {
-  font-weight: 200;
-}
-
-.open-info h2 {
-  font-family: 'Geist Variable';
-  font-size: 25px;
-  font-weight: 200;
-}
