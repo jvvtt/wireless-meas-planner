@@ -118,7 +118,9 @@ export function Scheduler() {
   const [measStartDatetime, setMeasStartDatetime] = useState(null);
   
   return (
-    <section className="flex flex-row justify-between mt-10 gap-x-2">
+    <article className="flex flex-col mt-20">
+      <header><h1 className="text-center font-thin text-5xl">Measurements and Flight plan</h1></header>
+      <section className="flex flex-row justify-between mt-10 gap-x-2">
       <div className="w-2/12 flex flex-col rounded border py-3">
         <label
           htmlFor="meas-time"
@@ -156,6 +158,8 @@ export function Scheduler() {
         </span>
       </div>
     </section>
+    </article>
+    
   );
 }
 
