@@ -1,9 +1,10 @@
 import * as L from "leaflet";
 import { useMap } from "react-leaflet";
+import drone_marker from "../assets/drone-marker.png"
 
 var iconTitle = ["Drone node marker"];
 
-var iconUrl = ["../../public/drone-marker.png"];
+var iconUrl = [drone_marker];
 
 export function CustomToolbar({ children, drawOpts }) {
   const geo_map = useMap();

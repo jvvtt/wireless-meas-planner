@@ -9,6 +9,7 @@ import { saveAs } from "file-saver";
 import { Dashboard } from "./components/Dashboard.jsx";
 import { OpenInfo } from "./components/OpenInfo";
 import { Scheduler } from "./components/Scheduler.jsx";
+import vtt_logo from "./assets/vtt-logo.svg";
 
 const infoCavasDevelopment = false;
 
@@ -39,7 +40,7 @@ function App() {
       <DroneMarkersProvider>
         <header className="header-app">
           <h1>Wireless Channel Measurements Planner</h1>
-          <img src="/public/vtt-logo.png" alt="VTT logo" />
+          <img src={vtt_logo} alt="VTT logo" />
         </header>
         <div className="body-content">
           <OpenInfo></OpenInfo>
