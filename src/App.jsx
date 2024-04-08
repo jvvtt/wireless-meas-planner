@@ -9,8 +9,7 @@ import { saveAs } from "file-saver";
 import { Dashboard } from "./components/Dashboard.jsx";
 import { OpenInfo } from "./components/OpenInfo";
 import { Scheduler } from "./components/Scheduler.jsx";
-import vtt_logo from "./assets/vtt-logo.svg";
-import { BannerSchedulerSVG } from "./components/SvgIcons.jsx";
+import { NavigationBar } from "./components/NavigationBar.jsx";
 
 const infoCavasDevelopment = false;
 
@@ -39,20 +38,7 @@ function App() {
   return (
     <GroundMarkersProvider>
       <DroneMarkersProvider>
-        <div className="flex flex-row justify-between bg-orange-400 max-w-full w-full h-20">
-          <div className="flex flex-col mx-12 py-1 mt-1">
-            <h1 className="font-semibold text-3xl text-white">
-              aerial-flight-planner
-            </h1>
-            <span className="font-medium text-white text-sm">
-              Wireless channel measurements planner
-            </span>
-          </div>
-          <div className="my-auto hover:cursor-pointer">
-            <BannerSchedulerSVG></BannerSchedulerSVG>
-          </div>
-          <img src={vtt_logo} alt="VTT logo" className="h-full max-h-full" />
-        </div>
+        <NavigationBar></NavigationBar>
         <div className="body-content">
           <OpenInfo></OpenInfo>
           <PDRSZonesProvider>
