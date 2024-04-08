@@ -19,11 +19,11 @@ export const ACTION_TYPES = {
   DRONE_OPERATOR: {
     MOVE: {
       NAME: "Move drone",
-      SHORT_DESCRIPTION: (a, b) => `From location ${a} to ${b}`,
+      SHORT_DESCRIPTION: (a, b, h) => `From location ${a} to ${b} @ height ${h}`,
     },
     HOVER: {
       NAME: "Hover drone",
-      SHORT_DESCRIPTION: (a) => `At location ${a}`,
+      SHORT_DESCRIPTION: (a, h) => `At location ${a} @ height ${h}`,
     },
   },
   SOFTWARE_OPERATOR: {
