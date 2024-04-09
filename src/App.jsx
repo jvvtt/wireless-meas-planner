@@ -1,17 +1,25 @@
 import "./App.css";
 import { MapToInteract } from "./components/MapToInteract";
-import { DroneMarkersProvider } from "./context/dronemarkers.jsx";
 import { InfoCanvas } from "./components/InfoCanvas";
-import { FiltersProvider } from "./context/filters";
-import { GroundMarkersProvider } from "./context/groundmarkers.jsx";
 import { PDRSZonesProvider } from "./context/pdrszones.jsx";
 import { saveAs } from "file-saver";
 import { Dashboard } from "./components/Dashboard.jsx";
 import { OpenInfo } from "./components/OpenInfo";
 import { Scheduler } from "./components/Scheduler.jsx";
 import { NavigationBar } from "./components/NavigationBar.jsx";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const infoCavasDevelopment = false;
+const router = createBrowserRouter([
+  {
+    path: "/wireless-meas-planner/",
+    element: <MainPage />,
+  },
+  {
+    path: "/wireless-meas-planner/scheduler",
+    element: <Scheduler />,
+  },
+]);
 
 function App() {
   const data = {
@@ -35,23 +43,22 @@ function App() {
   //mySaveDataToFile()
   console.log("Data saved to file successfully!");
 
+  return <RouterProvider router={router} />;
+}
+
+function MainPage() {
   return (
-    <GroundMarkersProvider>
-      <DroneMarkersProvider>
-        <NavigationBar></NavigationBar>
-        <div className="body-content">
-          <OpenInfo></OpenInfo>
-          <PDRSZonesProvider>
-            <FiltersProvider>
-              <MapToInteract></MapToInteract>
-              {infoCavasDevelopment && <InfoCanvas></InfoCanvas>}
-              <Dashboard></Dashboard>
-              <Scheduler></Scheduler>
-            </FiltersProvider>
-          </PDRSZonesProvider>
-        </div>
-      </DroneMarkersProvider>
-    </GroundMarkersProvider>
+    <>
+      <NavigationBar></NavigationBar>
+      <div className="body-content">
+        <OpenInfo></OpenInfo>
+        <PDRSZonesProvider>
+          <MapToInteract></MapToInteract>
+          {infoCavasDevelopment && <InfoCanvas></InfoCanvas>}
+          <Dashboard></Dashboard>
+        </PDRSZonesProvider>
+      </div>
+    </>
   );
 }
 

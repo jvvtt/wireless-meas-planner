@@ -121,19 +121,6 @@ export function useSchedulerPreset() {
     }
   });
 
-  /*CORRECT PREVIOUS PRESET BY ADDING THE NO ACTIONS OF THE DRONE OPERATOR*/
-  initialSchedulerState.DRONE_OPERATOR.map((action, cnt) => {
-    if (action.actionType === ACTION_TYPES.DRONE_OPERATOR.HOVER.NAME) {
-      for (let i = 0; i < ACTION_TYPES.SOFTWARE_OPERATOR.NUMBER_ACTIONS; i++) {
-        initialSchedulerState.DRONE_OPERATOR.splice(cnt, 0, {
-          actionType: ACTION_TYPES.NO_ACTION.NAME,
-          actionDescription: ACTION_TYPES.NO_ACTION.SHORT_DESCRIPTION,
-          actionDuration: action.actionDuration,
-        });
-      }
-    }
-  });
-
   /* ACTIONS FOR THE SOFTWARE OPERATOR*/
   initialSchedulerState.DRONE_OPERATOR.map((action, cnt) => {
     switch (action.actionType) {
@@ -143,6 +130,7 @@ export function useSchedulerPreset() {
           actionDescription: ACTION_TYPES.NO_ACTION.SHORT_DESCRIPTION,
           actionDuration: action.actionDuration,
         });
+        break;
       }
       case ACTION_TYPES.DRONE_OPERATOR.HOVER.NAME: {
         initialSchedulerState.SOFTWARE_OPERATOR.push({
@@ -175,6 +163,7 @@ export function useSchedulerPreset() {
           actionDuration:
             ACTION_TYPES.SOFTWARE_OPERATOR.STOP_RF.PRESET_DURATION,
         });
+        break;
       }
     }
   });

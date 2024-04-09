@@ -2,57 +2,64 @@
 import { ActionSVG, TimeSVG } from "./SvgIcons.jsx";
 import { convertSeconds } from "../logic/utils.js";
 import { useSchedulerPreset } from "../hooks/useSchedulerPreset.js";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { NavigationBar } from "./NavigationBar.jsx";
 
 export function Scheduler() {
   const [measStartDatetime, setMeasStartDatetime] = useState(null);
 
+  useEffect(() => console.log("Scheduler is rendered"), []);
   return (
-    <article className="flex flex-col mt-20">
-      <header>
-        <h1 className="text-center font-thin text-5xl">
-          Measurements and Flight plan
-        </h1>
-      </header>
-      <section className="flex flex-row justify-between mt-10 gap-x-2">
-        <div className="w-2/12 flex flex-col rounded border py-3">
-          <label
-            htmlFor="meas-time"
-            className="text-center text-xl text-slate-300 mb-4"
-          >
-            Start time
-          </label>
-          <input
-            type="datetime-local"
-            id="meas-time"
-            value="2024-05-01T19:30"
-            min="2024-04-01T00:00"
-            max="2050-12-31T23:59"
-            className="font-thin text-sm mx-auto w-3/4"
-            onChange={(e) => setMeasStartDatetime(e.target.value)}
-          />
-          <TimeCardsContainer
-            initialDatetime={measStartDatetime?.split("T")[1]}
-          ></TimeCardsContainer>
-        </div>
-        <div className="rounded border border-zinc-200 flex flex-col w-3/12 py-3 bg-customOrange">
-          <span className="font-thin text-center text-3xl mb-4">
-            Drone Operator
-          </span>
-          <PresetDroneOperatorActionCards></PresetDroneOperatorActionCards>
-        </div>
-        <div className="rounded border border-zinc-200 flex flex-col w-3/12 py-3 bg-customOrange">
-          <span className="font-thin text-center text-3xl mb-3">
-            Software Operator
-          </span>
-        </div>
-        <div className="rounded border border-zinc-200 flex flex-col w-3/12 py-3 bg-customOrange">
-          <span className="font-thin text-center text-3xl mb-3">
-            Van Operator
-          </span>
-        </div>
-      </section>
-    </article>
+    <>
+      <NavigationBar></NavigationBar>
+      <article className="flex flex-col mt-10 w-10/12 mx-auto">
+        <header>
+          <h1 className="text-center font-normal text-5xl text-slate-500">
+            Measurements and Flight plan
+          </h1>
+        </header>
+        <section className="flex flex-row justify-between mt-10 gap-x-3">
+          <div className="w-2/12 flex flex-col py-3">
+            <label
+              htmlFor="meas-time"
+              className="text-center text-xl text-slate-300 mb-4"
+            >
+              Start time
+            </label>
+            <input
+              type="datetime-local"
+              id="meas-time"
+              value="2024-05-01T19:30"
+              min="2024-04-01T00:00"
+              max="2050-12-31T23:59"
+              className="font-thin text-sm mx-auto w-3/4"
+              onChange={(e) => setMeasStartDatetime(e.target.value)}
+            />
+            <TimeCardsContainer
+              initialDatetime={measStartDatetime?.split("T")[1]}
+            ></TimeCardsContainer>
+          </div>
+          <div className="w-10/12 flex flex-row justify-between gap-x-3">
+            <div className="flex flex-col w-4/12 py-3 ">
+              <span className="font-normal text-center text-3xl mb-4 text-slate-500">
+                Drone Operator
+              </span>
+              <PresetDroneOperatorActionCards></PresetDroneOperatorActionCards>
+            </div>
+            <div className="flex flex-col w-4/12 py-3">
+              <span className="font-normal text-center text-3xl mb-3 text-slate-500">
+                Software Operator
+              </span>
+            </div>
+            <div className="flex flex-col w-4/12 py-3">
+              <span className="font-normal text-center text-3xl mb-3 text-slate-500">
+                Van Operator
+              </span>
+            </div>
+          </div>
+        </section>
+      </article>
+    </>
   );
 }
 
@@ -78,7 +85,7 @@ function PresetDroneOperatorActionCards() {
 function ActionCard({ actionType, actionDescription, actionDuration }) {
   return (
     <div className="flex flex-col m-y-0">
-      <div className="flex flex-row rounded border border-zinc-200 bg-white my-2 py-3 mx-4">
+      <div className="flex flex-row rounded border border-zinc-200 bg-white my-2 py-3 mx-6">
         <div className="w-1/6 ml-4">
           <ActionSVG actionType={actionType}></ActionSVG>
           <TimeSVG></TimeSVG>

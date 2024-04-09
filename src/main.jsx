@@ -1,16 +1,17 @@
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-
-const router = createBrowserRouter([
-  {
-    path: "/wireless-meas-planner/",
-    element: <App />,
-  },
-]);
+import { FiltersProvider } from "./context/filters";
+import { DroneMarkersProvider } from "./context/dronemarkers.jsx";
+import { GroundMarkersProvider } from "./context/groundmarkers.jsx";
 
 //ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <RouterProvider router={router} />
+  <FiltersProvider>
+    <GroundMarkersProvider>
+      <DroneMarkersProvider>
+        <App />
+      </DroneMarkersProvider>
+    </GroundMarkersProvider>
+  </FiltersProvider>
 );
