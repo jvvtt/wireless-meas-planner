@@ -1,23 +1,21 @@
 import * as L from "leaflet";
 import { useMap } from "react-leaflet";
-import drone_marker from "../assets/drone-marker.png"
+import { droneIcon, iconPoiGndHeading } from "../leaflet-ui/controls.js";
 
 var iconTitle = ["Drone node marker"];
-
-var iconUrl = [drone_marker];
 
 export function CustomToolbar({ children, drawOpts }) {
   const geo_map = useMap();
 
-  const createDrawnMarker = (id, type) => {
-    const icon = L.icon({
-      iconUrl: iconUrl[id],
-      iconSize: [25, 25],
-      iconAnchor: [12, 25],
-      tooltipAnchor: [12, -12],
-    });
-    icon.myType = type;
-    var marker = new L.Draw.Marker(geo_map, { icon: icon });
+  const createDrawnMarker = (type) => {
+    let marker;
+    if (type === "Drone") {
+      droneIcon.myType = type;
+      marker = new L.Draw.Marker(geo_map, { icon: droneIcon });
+    } else if (type === "POI-GND-HEAD") {
+      iconPoiGndHeading.myType = type;
+      marker = new L.Draw.Marker(geo_map, { icon: iconPoiGndHeading });
+    }
     return marker;
   };
 
@@ -51,8 +49,13 @@ export function CustomToolbar({ children, drawOpts }) {
         },
         {
           enabled: true,
-          handler: createDrawnMarker(0, "Drone"),
+          handler: createDrawnMarker("Drone"),
           title: iconTitle[0],
+        },
+        {
+          enabled: true,
+          handler: createDrawnMarker("POI-GND-HEAD"),
+          title: "POI for GND heading",
         },
       ];
     },

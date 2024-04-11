@@ -1,4 +1,3 @@
-import "./App.css";
 import { MapToInteract } from "./components/MapToInteract";
 import { InfoCanvas } from "./components/InfoCanvas";
 import { PDRSZonesProvider } from "./context/pdrszones.jsx";
@@ -8,6 +7,7 @@ import { OpenInfo } from "./components/OpenInfo";
 import { Scheduler } from "./components/Scheduler.jsx";
 import { NavigationBar } from "./components/NavigationBar.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { UserInputs } from "./components/UserInputs.jsx";
 
 const infoCavasDevelopment = false;
 const router = createBrowserRouter([
@@ -48,17 +48,18 @@ function App() {
 
 function MainPage() {
   return (
-    <>
+    <div className="bg-white mb-20">
       <NavigationBar></NavigationBar>
-      <div className="body-content">
+      <div className="p-2 mx-auto max-w-screen-xl mt-5">
         <OpenInfo></OpenInfo>
         <PDRSZonesProvider>
           <MapToInteract></MapToInteract>
           {infoCavasDevelopment && <InfoCanvas></InfoCanvas>}
+          <UserInputs></UserInputs>
           <Dashboard></Dashboard>
         </PDRSZonesProvider>
       </div>
-    </>
+    </div>
   );
 }
 

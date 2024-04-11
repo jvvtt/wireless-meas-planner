@@ -77,6 +77,25 @@ export function drone_yaw_to_set(droneCoords, groundCoords, droneHeading) {
 }
 
 /**
+ *
+ * @param {L.latLng} gndCoords  - Gnd coordinates in a Leaflet LatLng object
+ * @param {L.latLng} droneCoords - Drone coordinates in a Leaflet LatLng object
+ * @param {numeric} gndHeading - Bearing angle from drone to its heading direction. Lies in [-180, 180]. This is the usual heading direction of a node: angle between the north and where the noide is pointing.
+ * @returns {numeric} - Yaw angle in degrees to set in gimbal drone. Measured w.r.t. drone heading direction, WHICH IS THE 0 ANGLE FOR THE GIMBAL REFERENCE SYSTEM.
+ */
+export function gnd_yaw_to_set(gndCoords, droneCoords, gndHeading) {
+  const b = GeometryUtil.bearing(gndCoords, droneCoords);
+  let yaw = yaw_from_bearings(b, gndHeading);
+
+  if (yaw > 180) {
+    yaw = yaw - 360;
+  } else if (yaw < -180) {
+    yaw = yaw + 360;
+  }
+  return yaw;
+}
+
+/**
  * Computes the drone heading in the specific case where the drone heads to next marker on the map.
  * The heading direction of the drone is then point to the next marker on the map.
  * @param {L.latLng} thisCoords - This marker coordinates in a Leaflet LatLng object

@@ -1,68 +1,54 @@
-import { useMap, FeatureGroup } from "react-leaflet";
+import { useMap, FeatureGroup, Marker, CircleMarker } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import { useContext } from "react";
 import { DroneMarkersContext } from "../context/dronemarkers.jsx";
 import { GroundMarkersContext } from "../context/groundmarkers.jsx";
 import { PDRSZonesContext } from "../context/pdrszones.jsx";
-//import * as esri_geo from "esri-leaflet-geocoder";
 import { CustomToolbar } from "./CustomToolbar.jsx";
 import { DRONE_HEADING_TYPES } from "../logic/utils.js";
 import { useFilters } from "@/hooks/useFilters.js";
-
-/*
-const ARC_GIS_API_KEY =
-  "AAPK0f901f75ec4f4534b7065f77effda611lkO23dqpjc0JCju0a7JtvWTlIeSiVzCc43m2-UePuQfV7Rj4xx9hGJmPFKLy0Zzl";
-*/
+import { droneIcon, iconPoiGndHeading } from "../leaflet-ui/controls.js";
 
 export function DrawControl() {
   const geo_map = useMap();
-  const { onCreationGroundMarker, onEditGroundMarker, onDeleteGroundMarker } =
+  const { onCreationGroundMarker, onDeleteGroundMarker } =
     useContext(GroundMarkersContext);
-  const { onCreationMap, onEditMove, onDelete, setLastMarkerId } =
+  const { onCreationMap, onEditMove, onDelete } =
     useContext(DroneMarkersContext);
   const { setFgVertex } = useContext(PDRSZonesContext);
   const { setFiltersState } = useFilters();
 
-  const handleClickMarker = (e) => {
-    setLastMarkerId(e.target._leaflet_id);
-
-    /* UNCOMMENT TO RETRIEVE CLOSEST STREET/STORE/BUILDING NAME
-    esri_geo
-      .reverseGeocode({
-        apikey: ARC_GIS_API_KEY,
-      })
-      .latlng(e.latlng)
-      .run(function (error, result) {
-        if (error) {
-          return;
-        }
-        console.log(result.address.Match_addr);
-      });
-    */
-  };
-
   const handleCreated = (e) => {
+    // Drone marker
     if (e.layerType == "marker") {
-      // Drone marker
       if (e.layer.options.icon.myType === "Drone") {
-        e.layer.editing._marker.on("click", (e) => handleClickMarker(e));
         onCreationMap({ layer: e.layer });
+      } else if (e.layer.options.icon.myType === "POI-GND-HEAD") {
+        e.layer._map.removeLayer(e.layer);
+        setFiltersState((prevstate) => ({
+          ...prevstate,
+          poiGndHeading: [e.layer._latlng.lat, e.layer._latlng.lng],
+        }));
       }
-    } else if (e.layerType == "circlemarker") {
-      // Set the color of the circle marker
-      e.layer.editing._shape.setStyle({ color: "chocolate" });
+    }
+    // Ground marker
+    else if (e.layerType == "circlemarker") {
       onCreationGroundMarker({ layer: e.layer });
-    } else if (e.layerType == "polygon") {
+    }
+    // Flight Geography polygon
+    else if (e.layerType == "polygon") {
       setFgVertex((prevstate) => [
         ...prevstate,
         e.layer._latlngs[0].map((entry) => [entry.lat, entry.lng]),
       ]);
-    } else if (e.layerType == "polyline") {
+    }
+    // Measure distance tool (Polyline)
+    else if (e.layerType == "polyline") {
       e.layer._map.removeLayer(e.layer);
     }
   };
 
-  const handleEditMove = (e) => {
+  const handleEditMove = () => {
     onEditMove(geo_map);
   };
 
@@ -84,8 +70,8 @@ export function DrawControl() {
         draw={{ rectangle: false, polyline: true, circle: false }}
         position="topright"
         onCreated={(event) => handleCreated(event)}
-        onEditMove={(e) => handleEditMove(e)}
-        onDeleted={(e) => handleDelete(e)}
+        onEditMove={(event) => handleEditMove(event)}
+        onDeleted={(event) => handleDelete(event)}
       ></EditControl>
       <CustomToolbar
         drawOpts={{
@@ -96,6 +82,63 @@ export function DrawControl() {
           polygon: true,
         }}
       ></CustomToolbar>
+      <AllMapComponents></AllMapComponents>
     </FeatureGroup>
+  );
+}
+
+function AllMapComponents() {
+  const { gndmarkers } = useContext(GroundMarkersContext);
+  const { markers, setLastMarkerId } = useContext(DroneMarkersContext);
+  const { filters } = useFilters();
+  const onDroneClick = (event) => {
+    const id = markers.filter(
+      (marker) =>
+        event.latlng.lat == marker.lat && event.latlng.lng == marker.lng
+    )[0]?.id;
+    setLastMarkerId(id);
+  };
+  const droneMarkerEventHandlers = {
+    click: onDroneClick,
+  };
+
+  return (
+    <>
+      {markers.length > 0 ? (
+        markers.map((marker, cnt) => {
+          return (
+            <Marker
+              key={cnt}
+              position={[marker.lat, marker.lng]}
+              icon={droneIcon}
+              eventHandlers={droneMarkerEventHandlers}
+            ></Marker>
+          );
+        })
+      ) : (
+        <></>
+      )}
+      {gndmarkers.length > 0 ? (
+        gndmarkers.map((marker, cnt) => {
+          return (
+            <CircleMarker
+              key={cnt}
+              center={[marker.lat, marker.lng]}
+              pathOptions={{ color: "chocolate" }}
+            ></CircleMarker>
+          );
+        })
+      ) : (
+        <></>
+      )}
+      {filters.poiGndHeading.length > 0 ? (
+        <Marker
+          position={filters.poiGndHeading}
+          icon={iconPoiGndHeading}
+        ></Marker>
+      ) : (
+        <></>
+      )}
+    </>
   );
 }

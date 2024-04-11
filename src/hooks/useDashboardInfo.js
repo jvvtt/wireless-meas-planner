@@ -41,7 +41,7 @@ export function useDashboardInfo() {
         )
       : 0;
 
-  if (filters.gndActiveIdx !== null) {
+  if (filters.gndActiveIdx !== null && markers.length > 0) {
     const dist_2D_gnd_first_drone_loc = cosineDistanceBetweenPoints(
       gndmarkers[filters.gndActiveIdx].lat,
       gndmarkers[filters.gndActiveIdx].lng,

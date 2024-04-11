@@ -12,6 +12,8 @@ export function FiltersProvider({ children }) {
     droneHeadingType: DRONE_HEADING_TYPES.NEXT_COORD,
     gndActiveIdx: null,
     droneHoverTime: 60,
+    poiGndHeading: [],
+    startMeasTime: "2024-01-01T08:30",
   });
 
   return (

@@ -78,7 +78,7 @@ export function BannerSchedulerSVG() {
       fill="none"
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      className="w-10 h-10 stroke-white hover:stroke-orange-200"
+      className="w-10 h-10 stroke-orange-400 hover:stroke-orange-200"
     >
       <path
         strokeLinecap="round"

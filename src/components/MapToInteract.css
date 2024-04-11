@@ -1,9 +1,7 @@
 .map-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 2em;
-    height: 40em;
-    width: 100%;
-    border: solid 1px #c2bfbf;
-    border-radius: 2px;
+  display: flex;
+  justify-content: center;
+  margin-top: 2em;
+  height: 40em;
+  width: 100%;
 }

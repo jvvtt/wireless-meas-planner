@@ -2,57 +2,72 @@
 import { ActionSVG, TimeSVG } from "./SvgIcons.jsx";
 import { convertSeconds } from "../logic/utils.js";
 import { useSchedulerPreset } from "../hooks/useSchedulerPreset.js";
-import { useState, useEffect } from "react";
 import { NavigationBar } from "./NavigationBar.jsx";
+import { useContext } from "react";
+import { FiltersContext } from "../context/filters.jsx";
 
 export function Scheduler() {
-  const [measStartDatetime, setMeasStartDatetime] = useState(null);
-
-  useEffect(() => console.log("Scheduler is rendered"), []);
+  const { filters, setFiltersState } = useContext(FiltersContext);
+  const handleSetTime = (e) => {
+    setFiltersState((prevState) => ({
+      ...prevState,
+      startMeasTime: e.target.value,
+    }));
+  };
   return (
     <>
       <NavigationBar></NavigationBar>
-      <article className="flex flex-col mt-10 w-10/12 mx-auto">
-        <header>
-          <h1 className="text-center font-normal text-5xl text-slate-500">
-            Measurements and Flight plan
-          </h1>
-        </header>
-        <section className="flex flex-row justify-between mt-10 gap-x-3">
-          <div className="w-2/12 flex flex-col py-3">
+      <article className="flex flex-col mt-16 w-10/12 mx-auto">
+        <header className="flex flex-row justify-between bg-slate-100 py-5 px-6 rounded">
+          <div>
+            <h1 className="text-left font-extrabold text-5xl text-slate-500">
+              Schedule of Measurement Actions
+            </h1>
+            <span className="text-center text-3xl text-slate-300 mb-4 font-bold">
+              Place the nodes on the map to see here the schedule
+            </span>
+          </div>
+          <div className="flex flex-col my-auto py-3 px-8">
             <label
               htmlFor="meas-time"
-              className="text-center text-xl text-slate-300 mb-4"
+              className="text-center text-3xl text-slate-500 font-bold"
             >
-              Start time
+              Measurement's start time
             </label>
             <input
               type="datetime-local"
               id="meas-time"
-              value="2024-05-01T19:30"
               min="2024-04-01T00:00"
               max="2050-12-31T23:59"
-              className="font-thin text-sm mx-auto w-3/4"
-              onChange={(e) => setMeasStartDatetime(e.target.value)}
+              className="font-bold text-xl w-3/4 text-slate-300 mx-auto bg-slate-100"
+              value={filters.startMeasTime}
+              onChange={(e) => handleSetTime(e)}
             />
+          </div>
+        </header>
+        <section className="flex flex-row justify-between mt-8 gap-x-3 bg-slate-100">
+          <div className="w-2/12 flex flex-col py-3">
+            <span className="font-bold text-center text-3xl mb-3 text-slate-500">
+              Actions time
+            </span>
             <TimeCardsContainer
-              initialDatetime={measStartDatetime?.split("T")[1]}
+              initialDatetime={filters.startMeasTime?.split("T")[1]}
             ></TimeCardsContainer>
           </div>
           <div className="w-10/12 flex flex-row justify-between gap-x-3">
             <div className="flex flex-col w-4/12 py-3 ">
-              <span className="font-normal text-center text-3xl mb-4 text-slate-500">
+              <span className="font-bold text-center text-3xl mb-4 text-slate-500">
                 Drone Operator
               </span>
               <PresetDroneOperatorActionCards></PresetDroneOperatorActionCards>
             </div>
             <div className="flex flex-col w-4/12 py-3">
-              <span className="font-normal text-center text-3xl mb-3 text-slate-500">
+              <span className="font-bold text-center text-3xl mb-3 text-slate-500">
                 Software Operator
               </span>
             </div>
             <div className="flex flex-col w-4/12 py-3">
-              <span className="font-normal text-center text-3xl mb-3 text-slate-500">
+              <span className="font-bold text-center text-3xl mb-3 text-slate-500">
                 Van Operator
               </span>
             </div>
@@ -85,26 +100,28 @@ function PresetDroneOperatorActionCards() {
 function ActionCard({ actionType, actionDescription, actionDuration }) {
   return (
     <div className="flex flex-col m-y-0">
-      <div className="flex flex-row rounded border border-zinc-200 bg-white my-2 py-3 mx-6">
+      <div className="flex flex-row rounded border border-zinc-200 bg-white my-2 py-3 mx-6 px-3 shadow-sm">
         <div className="w-1/6 ml-4">
           <ActionSVG actionType={actionType}></ActionSVG>
           <TimeSVG></TimeSVG>
         </div>
         <article className="flex flex-col text-wrap justify-center w-5/6">
           <div className="flex flex-row justify-center gap-x-4">
-            <h2 className="font-thin text-center text-base">{actionType}</h2>
-            <strong className="font-thin text-center text-base text-slate-300 italic">
+            <h2 className="font-bold text-center text-base text-slate-600">
+              {actionType}
+            </h2>
+            <strong className="font-bold text-center text-base text-slate-300 italic">
               Action
             </strong>
           </div>
-          <span className="font-thin text-center text-sm text-slate-700">
+          <span className="font-normal text-center text-sm text-slate-700">
             {actionDescription}
           </span>
           <div className="flex flex-row justify-center gap-x-3">
-            <span className="font-thin text-center text-base text-slate-500">
+            <span className="font-normal text-center text-base text-slate-500">
               {actionDuration} s
             </span>
-            <span className="font-thin text-center text-base text-slate-300 italic">
+            <span className="font-bold text-center text-base text-slate-300 italic">
               Duration
             </span>
           </div>
@@ -128,7 +145,7 @@ function TimeCardsContainer({ initialDatetime }) {
   let startTime, endTime;
 
   return (
-    <div className="flex flex-col mb-2 gap-y-8">
+    <div className="flex flex-col gap-y-1">
       {initialSchedulerState.DRONE_OPERATOR.map((state, cnt) => {
         startTime = previousTime;
         endTime = convertSeconds(startTime, state.actionDuration);
@@ -147,14 +164,22 @@ function TimeCardsContainer({ initialDatetime }) {
 
 function TimeCard({ startTime, endTime }) {
   return (
-    <article className="flex flex-col items-center my-2 py-3">
-      <div className="flex flex-row justify-between gap-x-3">
-        <span className="text-center text-slate-300 text-base">Start</span> -
-        <span className="text-center font-thin text-base">{startTime}</span>
+    <article className="flex flex-col items-center py-7 mt-2 bg-slate-200">
+      <div className="flex flex-row justify-between gap-x-8">
+        <span className="text-center text-slate-300 text-xl font-bold">
+          Start
+        </span>{" "}
+        <span className="text-center font-medium text-lg text-slate-600">
+          {startTime}
+        </span>
       </div>
-      <div className="flex flex-row justify-between gap-x-3">
-        <span className="text-center text-slate-300 text-base">Stop</span> -
-        <span className="text-center font-thin text-base">{endTime}</span>
+      <div className="flex flex-row justify-between gap-x-8">
+        <span className="text-center text-slate-300 text-xl font-bold">
+          Stop
+        </span>{" "}
+        <span className="text-center font-medium text-lg text-slate-600">
+          {endTime}
+        </span>
       </div>
     </article>
   );
