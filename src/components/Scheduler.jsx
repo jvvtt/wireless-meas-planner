@@ -45,7 +45,7 @@ export function Scheduler() {
             />
           </div>
         </header>
-        <section className="flex flex-row justify-between mt-8 gap-x-3 bg-slate-100">
+        <section className="flex flex-row justify-between mt-8 gap-x-3 bg-slate-100 pl-8 py-6">
           <div className="w-2/12 flex flex-col py-3">
             <span className="font-bold text-center text-3xl mb-3 text-slate-500">
               Actions time
@@ -145,7 +145,7 @@ function TimeCardsContainer({ initialDatetime }) {
   let startTime, endTime;
 
   return (
-    <div className="flex flex-col gap-y-1">
+    <div className="flex flex-col gap-y-3 mt-2">
       {initialSchedulerState.DRONE_OPERATOR.map((state, cnt) => {
         startTime = previousTime;
         endTime = convertSeconds(startTime, state.actionDuration);
@@ -164,7 +164,7 @@ function TimeCardsContainer({ initialDatetime }) {
 
 function TimeCard({ startTime, endTime }) {
   return (
-    <article className="flex flex-col items-center py-7 mt-2 bg-slate-200">
+    <article className="flex flex-col items-center pt-6 pb-6 mt-1 border border-slate-100">
       <div className="flex flex-row justify-between gap-x-8">
         <span className="text-center text-slate-300 text-xl font-bold">
           Start
