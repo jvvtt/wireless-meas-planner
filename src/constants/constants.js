@@ -36,23 +36,23 @@ export const ACTION_TYPES = {
     NUMBER_ACTIONS: 4,
     START_RF: {
       NAME: "Start RF",
-      SHORT: "RX listening incoming signals",
+      SHORT_DESCRIPTION: "RX listening incoming signals",
       PRESET_DURATION: 5,
     },
     STOP_RF: {
       NAME: "Stop RF",
-      SHORT: "RX stops listening incoming signals",
+      SHORT_DESCRIPTION: "RX stops listening incoming signals",
       PRESET_DURATION: 5,
     },
     MOVE_DRONE_GIMBAL: {
       NAME: "Move drone gimbal",
-      SHORT: "Rotate yaw and pitch of gimbal",
+      SHORT_DESCRIPTION: (a, b) => `Rotate ${a} yaw, ${b} pitch`,
       SPEED_DRONE_GIMBAL: speed_drone_gimbal,
       PRESET_DURATION: (ang) => ang / speed_drone_gimbal,
     },
     MOVE_GND_GIMBAL: {
       NAME: "Move gnd gimbal",
-      SHORT: "Rotate yaw and pitch of gimbal",
+      SHORT_DESCRIPTION: (a, b) => `Rotate ${a} yaw, ${b} pitch`,
       SPEED_GND_GIMBAL: speed_gnd_gimbal,
       PRESET_DURATION: (ang) => ang / speed_gnd_gimbal,
     },
