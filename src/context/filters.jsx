@@ -8,6 +8,7 @@ export function FiltersProvider({ children }) {
   const [filters, setFiltersState] = useState({
     droneSpeed: 0.1,
     droneHeight: 40,
+    droneHeights: [],
     gndSpeed: 10,
     droneHeadingType: DRONE_HEADING_TYPES.NEXT_COORD,
     gndActiveIdx: null,

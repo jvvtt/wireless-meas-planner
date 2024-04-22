@@ -1,14 +1,34 @@
 /* eslint-disable react/prop-types */
 import "./Filters.css";
-import { useId, useContext } from "react";
+import { useId, useContext, useState } from "react";
 import { useFilters } from "../hooks/useFilters.js";
 import { DRONE_HEADING_TYPES } from "../logic/utils.js";
 import { GroundMarkersContext } from "../context/groundmarkers.jsx";
 import { useDashboardInfo } from "../hooks/useDashboardInfo";
+
 export function Filters() {
   const { filters, setFiltersState } = useFilters();
   const { gndmarkers } = useContext(GroundMarkersContext);
-  const { handleChangeHoverTime, handleChangeHeight } = useDashboardInfo();
+  const { handleChangeHoverTime, handleChangeHeight, handleChangeHeightArray } =
+    useDashboardInfo();
+  const [inputHeightValue, setInputHeightValue] = useState("");
+  const [selectedIdx, setSelectedIdx] = useState(null);
+
+  const handleClickHeight = (e, index) => {
+    handleChangeHeight(e);
+    setSelectedIdx(index);
+  };
+
+  const handleChangeHeightValue = (e) => {
+    setInputHeightValue(e.target.value);
+  };
+
+  const handleAddValue = (e) => {
+    console.log(inputHeightValue);
+    if (inputHeightValue.trim() !== "") {
+      handleChangeHeightArray(inputHeightValue);
+    }
+  };
 
   const gndSpeed = useId();
   const droneSpeed = useId();
@@ -88,8 +108,8 @@ export function Filters() {
           </span>
         </div>
       </div>
-      <section className="grid grid-cols-4 my-4 py-4 px-4 bg-slate-100 rounded">
-        <div className="flex flex-col font-bold text-base rounded justify-between px-4 my-1 text-slate-500">
+      <section className="grid grid-cols-5 my-4 py-4 px-4 bg-slate-100 rounded">
+        <div className="flex flex-col font-bold text-base rounded justify-around px-4 my-1 text-slate-500">
           <label htmlFor="selector-head" className="text-xl">
             Heading drone
           </label>
@@ -115,12 +135,12 @@ export function Filters() {
             </option>
           </select>
         </div>
-        <div className="flex flex-col font-bold text-base rounded justify-between px-4 my-1 text-slate-500">
+        <div className="flex flex-col font-bold text-base rounded justify-around px-4 my-1 text-slate-500">
           <label htmlFor="selector-gnd" className="text-xl">
             Ground location active
           </label>
           <span className="text-md text-slate-300">
-            Choose the ground location of the measurement of interest
+            Choose the ground location of interest
           </span>
           <select
             id="selector-gnd"
@@ -146,9 +166,9 @@ export function Filters() {
             )}
           </select>
         </div>
-        <div className="flex flex-col font-bold text-base rounded justify-between px-4 my-1 text-slate-500">
+        <div className="flex flex-col font-bold text-base rounded justify-around px-4 my-1 text-slate-500">
           <label htmlFor="drone-hover-time-input" className="text-xl">
-            Hover time per location [s]{" "}
+            Hover time [s]{" "}
           </label>
           <span className="text-md text-slate-300">
             {" "}
@@ -164,23 +184,50 @@ export function Filters() {
             onChange={(e) => handleChangeHoverTime(e)}
           />
         </div>
-        <div className="flex flex-col font-bold text-base rounded justify-between px-4 my-1 text-slate-500">
+        <div className="flex flex-col font-bold text-base rounded justify-around px-4 my-1 text-slate-500">
           <label htmlFor="drone-height" className="text-xl">
-            Drone height [m]
+            Drone height [m]{" "}
           </label>
           <span className="text-md text-slate-300">
             {" "}
-            Drone will fly at the same height until the end of the experiment.
+            Enter a new height value for the drone
           </span>
-
-          <input
-            type="number"
-            id="drone-height"
-            min="0"
-            placeholder="40"
-            className="rounded border shadow text-center my-auto"
-            onChange={(e) => handleChangeHeight(e)}
-          />
+          <div className="flex flex-row gap-x-2 justify-between">
+            <input
+              type="number"
+              id="drone-height"
+              min="0"
+              placeholder="40"
+              className="rounded border shadow text-center my-auto w-1/2"
+              value={inputHeightValue}
+              onChange={handleChangeHeightValue}
+            />
+            <button
+              onClick={(e) => handleAddValue(e)}
+              className="bg-blue-500 text-white text-base rounded w-1/2 my-auto"
+            >
+              Add height
+            </button>
+          </div>
+        </div>
+        <div className="flex flex-col font-bold text-base rounded justify-around px-4 my-1 text-slate-500">
+          <label className="text-xl">List of heights</label>
+          <div className="h-28 overflow-auto mt-3 border border-gray-300 rounded">
+            {filters.droneHeights.length > 0 &&
+              filters.droneHeights.map((value, index) => (
+                <p
+                  key={index}
+                  onClick={(e) => handleClickHeight(e, index)}
+                  //onMouseEnter={() => setHoveredIndex(index)}
+                  //onMouseLeave={() => setHoveredIndex(null)}
+                  className={`cursor-pointer ${
+                    selectedIdx === index ? "bg-gray-200" : ""
+                  } p-1 rounded`}
+                >
+                  {value}
+                </p>
+              ))}
+          </div>
         </div>
       </section>
     </>

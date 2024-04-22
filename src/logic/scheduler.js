@@ -2,7 +2,7 @@ import { ACTION_TYPES, ACTORS } from "../constants/constants";
 import { DroneMarkersContext } from "../context/dronemarkers.jsx";
 import { GroundMarkersContext } from "../context/groundmarkers.jsx";
 import { useContext } from "react";
-import { useFilters } from "./useFilters.js";
+import { useFilters } from "../hooks/useFilters.js";
 import { cosineDistanceBetweenPoints } from "../logic/utils.js";
 
 const MEAS_SEQUENCES = {

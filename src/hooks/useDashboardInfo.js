@@ -14,12 +14,21 @@ export function useDashboardInfo() {
   const handleChangeHeight = (e) => {
     setFiltersState((prevstate) => ({
       ...prevstate,
-      droneHeight: Number(e.target.value),
+      droneHeight: Number(e.target.innerText),
+    }));
+  };
+
+  const handleChangeHeightArray = (newHeight) => {
+    const copyFilters = structuredClone(filters);
+    let heights = copyFilters.droneHeights;
+    heights.push(Number(newHeight));
+    setFiltersState((prevstate) => ({
+      ...prevstate,
+      droneHeights: heights,
     }));
   };
 
   const handleChangeHoverTime = (e) => {
-    console.log(typeof e.target.value);
     setFiltersState((prevstate) => ({
       ...prevstate,
       droneHoverTime: Number(e.target.value),
@@ -78,6 +87,7 @@ export function useDashboardInfo() {
     handleChangeHoverTime,
     seAvgDroneBatt,
     handleChangeHeight,
+    handleChangeHeightArray,
     timeToPrevious,
   };
 }

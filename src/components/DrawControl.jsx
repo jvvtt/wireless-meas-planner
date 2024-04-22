@@ -61,6 +61,7 @@ export function DrawControl() {
       droneHeadingType: DRONE_HEADING_TYPES.NEXT_COORD,
       gndActiveIdx: null,
       droneHeight: 40,
+      poiGndHeading: [],
     }));
   };
 
