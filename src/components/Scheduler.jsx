@@ -1,11 +1,10 @@
 /* eslint-disable react/prop-types */
 import { ActionSVG, TimeSVG } from "./SvgIcons.jsx";
 import { convertSeconds } from "../logic/utils.js";
-import { useSchedulerPreset } from "../hooks/useSchedulerPreset.js";
 import { NavigationBar } from "./NavigationBar.jsx";
 import { useContext } from "react";
 import { FiltersContext } from "../context/filters.jsx";
-
+import { useMeasurementSeqCase1 } from "../logic/scheduler.js";
 export function Scheduler() {
   const { filters, setFiltersState } = useContext(FiltersContext);
   const handleSetTime = (e) => {
@@ -19,7 +18,7 @@ export function Scheduler() {
     <>
       <NavigationBar></NavigationBar>
       <article className="flex flex-col mt-16 w-10/12 mx-auto">
-        <header className="flex flex-row justify-between bg-slate-100 py-5 px-6 rounded">
+        <header className="flex flex-row justify-between py-5 px-6 rounded">
           <div>
             <h1 className="text-left font-extrabold text-5xl text-slate-500">
               Schedule of Measurement Actions
@@ -46,45 +45,108 @@ export function Scheduler() {
             />
           </div>
         </header>
-        <section className="flex flex-row justify-between mt-8 gap-x-3 bg-slate-100 pl-8 py-6">
-          <div className="w-2/12 flex flex-col py-3">
-            <span className="font-bold text-center text-3xl mb-3 text-slate-500">
+
+        <section className="flex flex-col my-10 pb-10">
+          <header className="rounded grid grid-cols-7 justify-between py-1 my-6 bg-slate-100">
+            <span className="font-bold text-center text-3xl mb-3 text-slate-500 col-span-1">
               Actions time
             </span>
-            <TimeCardsContainer
-              initialDatetime={filters.startMeasTime?.split("T")[1]}
-            ></TimeCardsContainer>
-          </div>
-          <div className="w-10/12 flex flex-row justify-between gap-x-3">
-            <div className="flex flex-col w-4/12 py-3 ">
-              <span className="font-bold text-center text-3xl mb-4 text-slate-500">
-                Drone Operator
-              </span>
-              <PresetDroneOperatorActionCards></PresetDroneOperatorActionCards>
-            </div>
-            <div className="flex flex-col w-4/12 py-3">
-              <span className="font-bold text-center text-3xl mb-3 text-slate-500">
-                Software Operator
-              </span>
-            </div>
-            <div className="flex flex-col w-4/12 py-3">
-              <span className="font-bold text-center text-3xl mb-3 text-slate-500">
-                Van Operator
-              </span>
-            </div>
-          </div>
+
+            <span className="font-bold text-center text-3xl mb-3 text-slate-500 col-span-2">
+              Drone Operator
+            </span>
+
+            <span className="font-bold text-center text-3xl mb-3 text-slate-500 col-span-2">
+              Software Operator
+            </span>
+
+            <span className="font-bold text-center text-3xl mb-3 text-slate-500 col-span-2">
+              Van Operator
+            </span>
+          </header>
+          <RowCard
+            initialDatetime={filters.startMeasTime?.split("T")[1]}
+          ></RowCard>
         </section>
       </article>
     </>
   );
 }
 
-function PresetDroneOperatorActionCards() {
-  const { initialSchedulerState } = useSchedulerPreset();
+function RowCard({ initialDatetime }) {
+  const { initialSchedulerState } = useMeasurementSeqCase1();
+  let previousTime = initialDatetime + ":00";
+  let startTime, endTime;
+
+  const droneActionsDuration = initialSchedulerState.DRONE_OPERATOR.map(
+    (actions) => {
+      let acc = 0;
+      for (const [key, action] of Object.entries(actions)) {
+        acc = acc + action.actionDuration;
+      }
+      return acc;
+    }
+  );
+  /*
+  const softwareActionsDruation = initialSchedulerState.SOFTWARE_OPERATOR.map(
+    (actions) => {
+      actions.reduce((acc, action) => {
+        acc + action.actionDuration;
+      }, 0);
+    }
+  );
+*/
+  /*
+  const driverActionsDuration = initialSchedulerState.DRIVER_OPERATOR.map(
+    (actions) => {
+      actions.reduce((acc, action) => {
+        acc + action.actionDuration;
+      }, 0);
+    }
+  );
+  */
+
+  console.log("drone actions duration: ", droneActionsDuration);
+  //console.log("software actions duration: ", softwareActionsDruation);
+  //console.log("driver actions duration: ", driverActionsDuration);
 
   return (
     <div className="flex flex-col">
-      {initialSchedulerState.DRONE_OPERATOR.map((state, cnt) => {
+      {initialSchedulerState.DRONE_OPERATOR.map((droneActionSet, cnt) => {
+        startTime = previousTime;
+        endTime = convertSeconds(startTime, droneActionsDuration[cnt]);
+        previousTime = endTime;
+        return (
+          <div key={cnt} className="grid grid-cols-7 justify-between">
+            <TimeCard
+              startTime={startTime}
+              endTime={endTime}
+              colSpan="1"
+            ></TimeCard>
+            <OperatorActionsSet
+              actionsSet={droneActionSet}
+              colSpan="2"
+            ></OperatorActionsSet>
+            <OperatorActionsSet
+              actionsSet={initialSchedulerState.SOFTWARE_OPERATOR[cnt]}
+              colSpan="2"
+            ></OperatorActionsSet>
+            <OperatorActionsSet
+              actionsSet={initialSchedulerState.DRIVER_OPERATOR[cnt]}
+              colSpan="2"
+            ></OperatorActionsSet>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function OperatorActionsSet({ actionsSet, colSpan }) {
+  console.log("OperatorActionsSet", actionsSet);
+  return (
+    <div className={`flex flex-col col-span-${colSpan}`}>
+      {actionsSet.map((state, cnt) => {
         return (
           <ActionCard
             key={cnt}
@@ -100,8 +162,8 @@ function PresetDroneOperatorActionCards() {
 
 function ActionCard({ actionType, actionDescription, actionDuration }) {
   return (
-    <div className="flex flex-col m-y-0">
-      <div className="flex flex-row rounded border border-zinc-200 bg-white my-2 py-3 mx-6 px-3 shadow-sm">
+    <div className="flex flex-col">
+      <div className="flex flex-row rounded border border-zinc-200 bg-white my-1 py-2 mx-6 px-3 shadow-sm">
         <div className="w-1/6 ml-4">
           <ActionSVG actionType={actionType}></ActionSVG>
           <TimeSVG></TimeSVG>
@@ -128,59 +190,20 @@ function ActionCard({ actionType, actionDescription, actionDuration }) {
           </div>
         </article>
       </div>
-      {/*
-      <button
-        className="rounded-full text-center bg-orange-400 text-lg font-bold text-white w-8 h-8 pb-1 mx-auto"
-        onClick={(e) => handleAddAction(e)}
-      >
-        +
-      </button>
-    */}
     </div>
   );
 }
 
-function TimeCardsContainer({ initialDatetime }) {
-  const { initialSchedulerState } = useSchedulerPreset();
-  let previousTime = initialDatetime + ":00";
-  let startTime, endTime;
-
+function TimeCard({ startTime, endTime, colSpan }) {
   return (
-    <div className="flex flex-col gap-y-3 mt-2">
-      {initialSchedulerState.DRONE_OPERATOR.map((state, cnt) => {
-        startTime = previousTime;
-        endTime = convertSeconds(startTime, state.actionDuration);
-        previousTime = endTime;
-        return (
-          <TimeCard
-            key={cnt}
-            startTime={startTime}
-            endTime={endTime}
-          ></TimeCard>
-        );
-      })}
-    </div>
-  );
-}
-
-function TimeCard({ startTime, endTime }) {
-  return (
-    <article className="flex flex-col items-center pt-6 pb-6 mt-1 border border-slate-100">
+    <article className={`flex flex-col items-center col-span-${colSpan}`}>
       <div className="flex flex-row justify-between gap-x-8">
-        <span className="text-center text-slate-300 text-xl font-bold">
-          Start
-        </span>{" "}
-        <span className="text-center font-medium text-lg text-slate-600">
-          {startTime}
-        </span>
+        <span className="text-slate-300 text-xl font-bold">Start</span>{" "}
+        <span className="font-medium text-lg text-slate-600">{startTime}</span>
       </div>
       <div className="flex flex-row justify-between gap-x-8">
-        <span className="text-center text-slate-300 text-xl font-bold">
-          Stop
-        </span>{" "}
-        <span className="text-center font-medium text-lg text-slate-600">
-          {endTime}
-        </span>
+        <span className="text-slate-300 text-xl font-bold">Stop</span>{" "}
+        <span className="font-medium text-lg text-slate-600">{endTime}</span>
       </div>
     </article>
   );

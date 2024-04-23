@@ -10,10 +10,19 @@ export function CoordsInfoCard() {
   const idxMarkerClicked = markers.findIndex(
     (entry) => entry.id === lastMarkerId
   );
-  const { timeToPrevious, getDroneGimbalYaw, getGNDGimbalYaw } = useFilters();
+  const {
+    timeToPrevious,
+    getDroneGimbalYaw,
+    getGNDGimbalYaw,
+    distsDroneGnd,
+    getGndGimbalPitch,
+  } = useFilters();
+
   const time = timeToPrevious(markers, "DRONE");
-  const droneAngles = getDroneGimbalYaw(markers, gndmarkers);
-  const gndAngles = getGNDGimbalYaw(gndmarkers, markers[idxMarkerClicked]);
+  const droneYaws = getDroneGimbalYaw(markers, gndmarkers);
+  const gndYaws = getGNDGimbalYaw(gndmarkers, markers[idxMarkerClicked]);
+  const nodesDists = distsDroneGnd(markers, gndmarkers);
+  const gndPitches = getGndGimbalPitch(markers, gndmarkers);
 
   return (
     <section className="bg-white rounded border-collapse flex flex-col my-4 gap-y-3 w-4/12">
@@ -57,7 +66,7 @@ export function CoordsInfoCard() {
           Drone gimbal yaw
         </label>
         <span id="drone-gimbal-yaw" className="text-align text-white">
-          {droneAngles[idxMarkerClicked]?.droneGimbalYaw?.toFixed(2)}
+          {droneYaws[idxMarkerClicked]?.droneGimbalYaw?.toFixed(2)}
         </span>
       </div>
       <div className="flex flex-row font-semibold text-base bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
@@ -65,7 +74,7 @@ export function CoordsInfoCard() {
           Drone gimbal pitch
         </label>
         <span id="drone-gimbal-pitch" className="text-align text-white">
-          {droneAngles[idxMarkerClicked]?.droneGimbalYaw?.toFixed(2)}
+          {-gndPitches[idxMarkerClicked]}
         </span>
       </div>
       <div className="flex flex-row font-semibold text-base bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
@@ -73,7 +82,7 @@ export function CoordsInfoCard() {
           Nodes distance
         </label>
         <span id="nodes-distance" className="text-align text-white">
-          {droneAngles[idxMarkerClicked]?.droneGimbalYaw?.toFixed(2)}
+          {nodesDists[idxMarkerClicked]}
         </span>
       </div>
       <div className="flex flex-row font-semibold text-base bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
@@ -81,7 +90,7 @@ export function CoordsInfoCard() {
           Gnd gimbal yaw
         </label>
         <span id="gnd-gimbal-yaw" className="text-align text-white">
-          {gndAngles?.gndGimbalYaw?.toFixed(2)}
+          {gndYaws?.gndGimbalYaw?.toFixed(2)}
         </span>
       </div>
       <div className="flex flex-row font-semibold text-base bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
@@ -89,7 +98,7 @@ export function CoordsInfoCard() {
           Gnd gimbal pitch
         </label>
         <span id="gnd-gimbal-pitch" className="text-align text-white">
-          {droneAngles[idxMarkerClicked]?.droneGimbalYaw?.toFixed(2)}
+          {gndPitches[idxMarkerClicked]}
         </span>
       </div>
     </section>

@@ -5,6 +5,7 @@ import {
   drone_heading_to_next_marker,
   drone_yaw_to_set,
   gnd_yaw_to_set,
+  cosineDistanceBetweenPoints,
 } from "../logic/utils.js";
 import { destination, bearing } from "leaflet-geometryutil";
 import { latLng } from "leaflet";
@@ -21,25 +22,32 @@ export function useFilters() {
     });
   };
 
-  const distDroneGnd = (drone_points, ground_points) => {
-    let distDroneGnd = 0;
-    if (
-      drone_points.length > 0 &&
-      ground_points.length > 0 &&
-      filters.gndActiveIdx !== null
-    ) {
-      1;
+  const distsDroneGnd = (drone_points, ground_points) => {
+    if (filters.gndActiveIdx !== null) {
+      return drone_points.map((drone_point) => {
+        return cosineDistanceBetweenPoints(
+          drone_point.lat,
+          drone_point.lng,
+          ground_points[filters.gndActiveIdx].lat,
+          ground_points[filters.gndActiveIdx].lng
+        ).toFixed(1);
+      });
+    } else {
+      return Array(drone_points.length).fill(0);
     }
   };
 
-  const getDroneGimbalPitch = (drone_points) => {
-    let drone_pitch;
-    if (drone_points.length > 0) {
-      drone_pitch = drone_points.map((point, cnt) => {
-        1;
+  const getGndGimbalPitch = (drone_points, ground_points) => {
+    if (filters.gndActiveIdx !== null) {
+      const dists = distsDroneGnd(drone_points, ground_points);
+      return dists.map((dist) => {
+        return (
+          (Math.atan2(Number(filters.droneHeight), Number(dist)) * 180) /
+          Math.PI
+        ).toFixed(1);
       });
     } else {
-      1;
+      return Array(drone_points.length).fill(0);
     }
   };
   const getDroneGimbalYaw = (drone_points, ground_points) => {
@@ -246,5 +254,7 @@ export function useFilters() {
     filters,
     getDroneGimbalYaw,
     getGNDGimbalYaw,
+    distsDroneGnd,
+    getGndGimbalPitch,
   };
 }
