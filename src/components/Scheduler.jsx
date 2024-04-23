@@ -5,8 +5,6 @@ import { useSchedulerPreset } from "../hooks/useSchedulerPreset.js";
 import { NavigationBar } from "./NavigationBar.jsx";
 import { useContext } from "react";
 import { FiltersContext } from "../context/filters.jsx";
-import { findSiblingsInGOSA, findIdxInGOSA } from "../logic/scheduler.js";
-import { ACTION_TYPES, ACTORS } from "../constants/constants";
 
 export function Scheduler() {
   const { filters, setFiltersState } = useContext(FiltersContext);
@@ -16,16 +14,6 @@ export function Scheduler() {
       startMeasTime: e.target.value,
     }));
   };
-
-  const idxSiblings = findIdxInGOSA(
-    ACTION_TYPES.SOFTWARE_OPERATOR.MOVE_DRONE_GIMBAL.NAME
-  );
-  const siblings = findSiblingsInGOSA(
-    ACTION_TYPES.SOFTWARE_OPERATOR.MOVE_DRONE_GIMBAL.NAME
-  );
-
-  console.log("Action: : idxSiblings: ", idxSiblings);
-  console.log("Action: : siblings: ", siblings);
 
   return (
     <>
