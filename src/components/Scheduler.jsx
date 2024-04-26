@@ -4,7 +4,11 @@ import { convertSeconds } from "../logic/utils.js";
 import { NavigationBar } from "./NavigationBar.jsx";
 import { useContext } from "react";
 import { FiltersContext } from "../context/filters.jsx";
-import { useMeasurementSeqCase1 } from "../logic/scheduler.js";
+import {
+  useMeasurementSeqCase1,
+  useMeasurementSeqOrderB,
+} from "../logic/scheduler.js";
+
 export function Scheduler() {
   const { filters, setFiltersState } = useContext(FiltersContext);
   const handleSetTime = (e) => {
@@ -74,9 +78,10 @@ export function Scheduler() {
 }
 
 function RowCard({ initialDatetime }) {
-  const { initialSchedulerState } = useMeasurementSeqCase1();
+  //const { initialSchedulerState } = useMeasurementSeqCase1();
+  const { initialSchedulerState } = useMeasurementSeqOrderB();
   let previousTime = initialDatetime + ":00";
-  let startTime, endTime;
+  let startTime, endTime, endTimeDrone, endTimeDriver, endTimeSoftware;
 
   const droneActionsDuration = initialSchedulerState.DRONE_OPERATOR.map(
     (actions) => {
@@ -87,33 +92,45 @@ function RowCard({ initialDatetime }) {
       return acc;
     }
   );
-  /*
-  const softwareActionsDruation = initialSchedulerState.SOFTWARE_OPERATOR.map(
+
+  const softwareActionsDuration = initialSchedulerState.SOFTWARE_OPERATOR.map(
     (actions) => {
-      actions.reduce((acc, action) => {
-        acc + action.actionDuration;
-      }, 0);
+      let acc = 0;
+      for (const [key, action] of Object.entries(actions)) {
+        acc = acc + action.actionDuration;
+      }
+      return acc;
     }
   );
-*/
-  /*
+
   const driverActionsDuration = initialSchedulerState.DRIVER_OPERATOR.map(
     (actions) => {
-      actions.reduce((acc, action) => {
-        acc + action.actionDuration;
-      }, 0);
+      let acc = 0;
+      for (const [key, action] of Object.entries(actions)) {
+        acc = acc + action.actionDuration;
+      }
+      return acc;
     }
   );
-  */
 
+  /*
   console.log("drone actions duration: ", droneActionsDuration);
-  //console.log("software actions duration: ", softwareActionsDruation);
-  //console.log("driver actions duration: ", driverActionsDuration);
+  console.log("software actions duration: ", softwareActionsDuration);
+  console.log("driver actions duration: ", driverActionsDuration);
+  */
 
   return (
     <div className="flex flex-col">
       {initialSchedulerState.DRONE_OPERATOR.map((droneActionSet, cnt) => {
         startTime = previousTime;
+        /*endTimeDrone = convertSeconds(startTime, droneActionsDuration[cnt]);
+        endTimeDriver = convertSeconds(startTime, driverActionsDuration[cnt]);
+        endTimeSoftware = convertSeconds(
+          startTime,
+          softwareActionsDuration[cnt]
+        );
+        */
+        //endTime = Math.max(endTimeDrone, endTimeDriver, endTimeSoftware);
         endTime = convertSeconds(startTime, droneActionsDuration[cnt]);
         previousTime = endTime;
         return (
@@ -143,7 +160,7 @@ function RowCard({ initialDatetime }) {
 }
 
 function OperatorActionsSet({ actionsSet, colSpan }) {
-  console.log("OperatorActionsSet", actionsSet);
+  //  console.log("OperatorActionsSet", actionsSet);
   return (
     <div className={`flex flex-col col-span-${colSpan}`}>
       {actionsSet.map((state, cnt) => {

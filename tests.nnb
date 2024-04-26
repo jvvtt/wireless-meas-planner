@@ -1,0 +1,91 @@
+{
+    "cells": [
+        {
+            "language": "typescript",
+            "source": [
+                "let conditionStatement = `if (`;\r\n\r\n          for (\r\n            let cntIfStatements = 0;\r\n            cntIfStatements < 12;\r\n            cntIfStatements++\r\n          ) {\r\n            if (cntIfStatements === 11) {\r\n              conditionStatement =\r\n                conditionStatement +\r\n                `(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === ${cntIfStatements})`;\r\n            } else {\r\n              conditionStatement =\r\n                conditionStatement +\r\n                `(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === ${cntIfStatements}) ||`;\r\n            }\r\n          }\r\n\r\n          conditionStatement =\r\n            conditionStatement +\r\n            `){gndLocationNumber = g;}else{gndLocationNumber = gndmarkers.length-1-g;}`;"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "",
+                                ""
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "items": [
+                        {
+                            "mime": "text/plain",
+                            "value": [
+                                "\u001b[32m'if ((cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 0) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 1) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 2) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 3) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 4) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 5) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 6) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 7) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 8) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 9) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 10) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 11)){gndLocationNumber = g;}else{gndLocationNumber = gndmarkers.length-1-g;}'\u001b[39m"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "conditionStatement"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "",
+                                ""
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "items": [
+                        {
+                            "mime": "text/plain",
+                            "value": [
+                                "\u001b[32m'if ((cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 0) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 1) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 2) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 3) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 4) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 5) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 6) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 7) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 8) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 9) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 10) ||(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === 11)){gndLocationNumber = g;}else{gndLocationNumber = gndmarkers.length-1-g;}'\u001b[39m"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "((11 % (2*4*3)===0) || (11 % (2*4*3)===1) || (11 % (2*4*3)===11))"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "",
+                                ""
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "items": [
+                        {
+                            "mime": "text/plain",
+                            "value": [
+                                "\u001b[33mtrue\u001b[39m"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

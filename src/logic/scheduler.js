@@ -479,7 +479,7 @@ export function useMeasurementSeqCase1() {
   return { initialSchedulerState };
 }
 
-export function useMeasurementSeqOrderB({ seq }) {
+export function useMeasurementSeqOrderB() {
   // Order B : Height > GND > Drone
   const { markers } = useContext(DroneMarkersContext);
   const { gndmarkers } = useContext(GroundMarkersContext);
@@ -497,149 +497,377 @@ export function useMeasurementSeqOrderB({ seq }) {
   };
 
   let actionMoveDroneDuration, actionMoveGndDuration;
+  let cntSteps = 0;
+  let droneHeight = filters.droneHeights[0];
+  let gndLocationNumber = 0;
+  let droneHeightNumber = 0;
 
   for (let d = 0; d < markers.length; d++) {
     for (let g = 0; g < gndmarkers.length; g++) {
       for (let h = 0; h < filters.droneHeights.length; h++) {
-        if (d === 0) {
+        // Special behaviour for first position
+        if (cntSteps === 0) {
           actionMoveDroneDuration = (
             cosineDistanceBetweenPoints(
-              markers[d].lat,
-              markers[d].lng,
-              gndmarkers[g].lat,
-              gndmarkers[g].lng
+              markers[0].lat,
+              markers[0].lng,
+              gndmarkers[0].lat,
+              gndmarkers[0].lng
             ) / filters.droneSpeed
           ).toFixed(1);
-        } else if (d > 0) {
-          actionMoveDroneDuration = markers[d].distToPrevious.toFixed(1);
+
+          console.log(actionMoveDroneDuration);
+          // DRONE OPERATOR
+          initialSchedulerState.DRONE_OPERATOR.push([
+            {
+              actionType: ACTION_TYPES.DRONE_OPERATOR.MOVE.NAME,
+              actionDescription:
+                ACTION_TYPES.DRONE_OPERATOR.MOVE.SHORT_DESCRIPTION(
+                  "GND",
+                  1,
+                  droneHeight
+                ),
+              actionDuration: Number(actionMoveDroneDuration),
+            },
+          ]);
+
+          // DRIVER OPERATOR
+          // For first position, lets assume that drone takes longer time than ground for each other reaching their first positions.
+          // This is easily done, by considering the start of the measurement after placing the ground in its first position.
+          initialSchedulerState.DRIVER_OPERATOR.push([
+            {
+              actionType: ACTION_TYPES.DRIVER_OPERATOR.MOVE.NAME,
+              actionDescription:
+                ACTION_TYPES.DRIVER_OPERATOR.MOVE.SHORT_DESCRIPTION(g, g + 1),
+              actionDuration: Number(actionMoveDroneDuration),
+            },
+          ]);
+
+          // SOFTWARE OPERATOR
+          initialSchedulerState.SOFTWARE_OPERATOR.push([
+            {
+              actionType: ACTION_TYPES.NO_ACTION.NAME,
+              actionDescription: ACTION_TYPES.NO_ACTION.SHORT_DESCRIPTION,
+              actionDuration: Number(actionMoveDroneDuration),
+            },
+          ]);
+
+          // AFTER EACH MOVE ACTION DRONE DOES A HOVER ACTION AND THE SOFTWARE DOES MEASUREMENT ACTIONS
+          initialSchedulerState = whileDroneHoverActions({
+            initialSchedulerState: initialSchedulerState,
+            gndyaw: 99,
+            gndpitch: 99,
+            droneyaw: 99,
+            dronepitch: 99,
+            droneHoverTime: filters.droneHoverTime,
+            locationNumber: 1,
+            thisHeight: filters.droneHeights[0],
+          });
+
+          // Other postitions
+        } else {
+          /*
+          GET THE CORRECT HEIGHT: HEIGHT INDEX "h" DOES NOT RETRIEVE THE CORRECT HEIGHT FROM "filters.droneHeights" array
+          CHECK DOCS ON THIS MEAS METHODOLOGY.
+          */
+
+          let conditionStatement = `if (`;
+
+          for (
+            let cntIfStatements = 0;
+            cntIfStatements < filters.droneHeights.length;
+            cntIfStatements++
+          ) {
+            if (cntIfStatements === filters.droneHeights.length - 1) {
+              conditionStatement =
+                conditionStatement +
+                `(cntSteps % (2*filters.droneHeights.length) === ${cntIfStatements})`;
+            } else {
+              conditionStatement =
+                conditionStatement +
+                `(cntSteps % (2*filters.droneHeights.length) === ${cntIfStatements}) ||`;
+            }
+          }
+
+          conditionStatement =
+            conditionStatement +
+            `){droneHeightNumber = h;droneHeight = filters.droneHeights[droneHeightNumber];}else{droneHeightNumber = filters.droneHeights.length-1-h;droneHeight = filters.droneHeights[droneHeightNumber];}`;
+
+          eval(conditionStatement);
+
+          /*
+          GET THE CORRECT GROUND LOCATIONs: GROUND MARKER INDEX "g" DOES NOT RETRIEVE THE CORRECT Ground Location FROM "gndmarkers" array
+          CHECK DOCS ON THIS MEAS METHODOLOGY.
+          */
+          conditionStatement = `if (`;
+
+          for (
+            let cntIfStatements = 0;
+            cntIfStatements < filters.droneHeights.length * gndmarkers.length;
+            cntIfStatements++
+          ) {
+            if (
+              cntIfStatements ===
+              filters.droneHeights.length * gndmarkers.length - 1
+            ) {
+              conditionStatement =
+                conditionStatement +
+                `(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === ${cntIfStatements})`;
+            } else {
+              conditionStatement =
+                conditionStatement +
+                `(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === ${cntIfStatements}) ||`;
+            }
+          }
+
+          conditionStatement =
+            conditionStatement +
+            `){gndLocationNumber = g;}else{gndLocationNumber = gndmarkers.length-1-g;}`;
+
+          eval(conditionStatement);
+
+          if (
+            cntSteps % (gndmarkers.length * filters.droneHeights.length) ===
+            0
+          ) {
+            actionMoveDroneDuration = (
+              markers[d].distToPrevious / filters.droneSpeed
+            ).toFixed(1);
+
+            // DRONE OPERATOR
+            initialSchedulerState.DRONE_OPERATOR.push([
+              {
+                actionType: ACTION_TYPES.DRONE_OPERATOR.MOVE.NAME,
+                actionDescription:
+                  ACTION_TYPES.DRONE_OPERATOR.MOVE.SHORT_DESCRIPTION(
+                    d,
+                    d + 1,
+                    droneHeight
+                  ),
+                actionDuration: Number(actionMoveDroneDuration),
+              },
+            ]);
+
+            // DRIVER OPERATOR
+            initialSchedulerState.DRIVER_OPERATOR.push([
+              {
+                actionType: ACTION_TYPES.NO_ACTION.NAME,
+                actionDescription: ACTION_TYPES.NO_ACTION.SHORT_DESCRIPTION,
+                actionDuration: Number(actionMoveDroneDuration),
+              },
+            ]);
+
+            // SOFTWARE OPERATOR
+            initialSchedulerState.SOFTWARE_OPERATOR.push([
+              {
+                actionType: ACTION_TYPES.NO_ACTION.NAME,
+                actionDescription: ACTION_TYPES.NO_ACTION.SHORT_DESCRIPTION,
+                actionDuration: Number(actionMoveDroneDuration),
+              },
+            ]);
+
+            // AFTER EACH MOVE ACTION DRONE DOES A HOVER ACTION AND THE SOFTWARE DOES MEASUREMENT ACTIONS
+            initialSchedulerState = whileDroneHoverActions({
+              initialSchedulerState: initialSchedulerState,
+              gndyaw: 99,
+              gndpitch: 99,
+              droneyaw: 99,
+              dronepitch: 99,
+              droneHoverTime: filters.droneHoverTime,
+              locationNumber: d,
+              thisHeight: droneHeight,
+            });
+          } else if (
+            cntSteps % filters.droneHeights.length === 0 &&
+            cntSteps % (filters.droneHeights.length * gndmarkers.length) !== 0
+          ) {
+            actionMoveGndDuration = (
+              gndmarkers[gndLocationNumber].distToPrevious /
+              (filters.gndSpeed * (1000 / 3600))
+            ).toFixed(1);
+
+            // DRONE OPERATOR
+            initialSchedulerState.DRONE_OPERATOR.push([
+              {
+                actionType: ACTION_TYPES.NO_ACTION.NAME,
+                actionDescription: ACTION_TYPES.NO_ACTION.NAME,
+                actionDuration: Number(actionMoveGndDuration),
+              },
+            ]);
+
+            // DRIVER OPERATOR
+            initialSchedulerState.DRIVER_OPERATOR.push([
+              {
+                actionType: ACTION_TYPES.DRIVER_OPERATOR.MOVE.NAME,
+                actionDescription:
+                  ACTION_TYPES.DRIVER_OPERATOR.MOVE.SHORT_DESCRIPTION(
+                    gndLocationNumber,
+                    gndLocationNumber + 1
+                  ),
+                actionDuration: Number(actionMoveGndDuration),
+              },
+            ]);
+
+            // SOFTWARE OPERATOR
+            initialSchedulerState.SOFTWARE_OPERATOR.push([
+              {
+                actionType: ACTION_TYPES.NO_ACTION.NAME,
+                actionDescription: ACTION_TYPES.NO_ACTION.SHORT_DESCRIPTION,
+                actionDuration: Number(actionMoveGndDuration),
+              },
+            ]);
+
+            // AFTER EACH MOVE ACTION DRONE DOES A HOVER ACTION AND THE SOFTWARE DOES MEASUREMENT ACTIONS
+            initialSchedulerState = whileDroneHoverActions({
+              initialSchedulerState: initialSchedulerState,
+              gndyaw: 99,
+              gndpitch: 99,
+              droneyaw: 99,
+              dronepitch: 99,
+              droneHoverTime: filters.droneHoverTime,
+              locationNumber: d + 1,
+              thisHeight: droneHeight,
+            });
+          } else if (cntSteps % filters.droneHeights.length !== 0) {
+            actionMoveDroneDuration = (
+              Math.abs(
+                droneHeight - filters.droneHeights[droneHeightNumber - 1]
+              ) / filters.droneSpeed
+            ).toFixed(1);
+
+            // DRONE OPERATOR
+            initialSchedulerState.DRONE_OPERATOR.push([
+              {
+                actionType: ACTION_TYPES.DRONE_OPERATOR.CHANGE_HEIGHT.NAME,
+                actionDescription:
+                  ACTION_TYPES.DRONE_OPERATOR.CHANGE_HEIGHT.SHORT_DESCRIPTION(
+                    d + 1,
+                    filters.droneHeights[droneHeightNumber - 1],
+                    droneHeight
+                  ),
+                actionDuration: Number(actionMoveDroneDuration),
+              },
+            ]);
+
+            // DRIVER OPERATOR
+            initialSchedulerState.DRIVER_OPERATOR.push([
+              {
+                actionType: ACTION_TYPES.NO_ACTION.NAME,
+                actionDescription: ACTION_TYPES.NO_ACTION.SHORT_DESCRIPTION,
+                actionDuration: Number(actionMoveDroneDuration),
+              },
+            ]);
+
+            // SOFTWARE OPERATOR
+            initialSchedulerState.SOFTWARE_OPERATOR.push([
+              {
+                actionType: ACTION_TYPES.NO_ACTION.NAME,
+                actionDescription: ACTION_TYPES.NO_ACTION.SHORT_DESCRIPTION,
+                actionDuration: Number(actionMoveDroneDuration),
+              },
+            ]);
+
+            // AFTER EACH CHANGE HEIGHT ACTION DRONE DOES A HOVER ACTION AND THE SOFTWARE DOES MEASUREMENT ACTIONS
+            initialSchedulerState = whileDroneHoverActions({
+              initialSchedulerState: initialSchedulerState,
+              gndyaw: 99,
+              gndpitch: 99,
+              droneyaw: 99,
+              dronepitch: 99,
+              droneHoverTime: filters.droneHoverTime,
+              locationNumber: d + 1,
+              thisHeight: droneHeight,
+            });
+          }
         }
-        if (g === 0) {
-          // Change this to get the time it takes the ground station to move from an "initial unknown point to
-          // the first place it will visit.
-          actionMoveGndDuration = actionMoveDroneDuration;
-        } else if (g > 0) {
-          actionMoveGndDuration = gndmarkers[g].distToPrevious.toFixed(1);
-        }
 
-        //------------------------------------------------
-        // DRONE OPERATOR
-        initialSchedulerState.DRONE_OPERATOR.push([
-          {
-            actionType: ACTION_TYPES.DRONE_OPERATOR.MOVE.NAME,
-            actionDescription:
-              ACTION_TYPES.DRONE_OPERATOR.MOVE.SHORT_DESCRIPTION(
-                d,
-                d + 1,
-                filters.droneHeights[h]
-              ),
-            actionDuration: actionMoveDroneDuration,
-          },
-        ]);
-
-        // SOFTWARE OPERATOR
-        initialSchedulerState.SOFTWARE_OPERATOR.push([
-          {
-            actionType: ACTION_TYPES.NO_ACTION.NAME,
-            actionDescription: ACTION_TYPES.NO_ACTION.SHORT_DESCRIPTION,
-            actionDuration: Math.max(
-              actionMoveDroneDuration,
-              actionMoveGndDuration
-            ),
-          },
-        ]);
-
-        // DRIVER OPERATOR
-        initialSchedulerState.DRIVER_OPERATOR.push([
-          {
-            actionType: ACTION_TYPES.DRIVER_OPERATOR.MOVE.NAME,
-            actionDescription:
-              ACTION_TYPES.DRIVER_OPERATOR.MOVE.SHORT_DESCRIPTION(g, g + 1),
-            actionDuration: actionMoveGndDuration,
-          },
-        ]);
-
-        //----------------------------------------------------------------
-        // DRONE OPERATOR
-        initialSchedulerState.DRONE_OPERATOR.push([
-          {
-            actionType: ACTION_TYPES.DRONE_OPERATOR.HOVER.NAME,
-            actionDescription:
-              ACTION_TYPES.DRONE_OPERATOR.HOVER.SHORT_DESCRIPTION(
-                1,
-                filters.droneHeight
-              ),
-            actionDuration: filters.droneHoverTime,
-          },
-        ]);
-
-        // SOFTWARE OPERATOR
-        initialSchedulerState.SOFTWARE_OPERATOR.push([
-          {
-            actionType: ACTION_TYPES.SOFTWARE_OPERATOR.MOVE_GND_GIMBAL.NAME,
-            actionDescription:
-              ACTION_TYPES.SOFTWARE_OPERATOR.MOVE_GND_GIMBAL.SHORT_DESCRIPTION(
-                gndyaw,
-                gndpitch
-              ),
-            actionDuration:
-              ACTION_TYPES.SOFTWARE_OPERATOR.MOVE_GND_GIMBAL.PRESET_DURATION(
-                180
-              ),
-          },
-        ]);
-
-        initialSchedulerState.SOFTWARE_OPERATOR[
-          initialSchedulerState.SOFTWARE_OPERATOR.length - 1
-        ].push({
-          actionType: ACTION_TYPES.SOFTWARE_OPERATOR.MOVE_DRONE_GIMBAL.NAME,
-          actionDescription:
-            ACTION_TYPES.SOFTWARE_OPERATOR.MOVE_DRONE_GIMBAL.SHORT_DESCRIPTION(
-              droneyaw,
-              dronepitch
-            ),
-          actionDuration:
-            ACTION_TYPES.SOFTWARE_OPERATOR.MOVE_DRONE_GIMBAL.PRESET_DURATION(
-              180
-            ),
-        });
-
-        initialSchedulerState.SOFTWARE_OPERATOR[
-          initialSchedulerState.SOFTWARE_OPERATOR.length - 1
-        ].push({
-          actionType: ACTION_TYPES.SOFTWARE_OPERATOR.START_RF.NAME,
-          actionDescription:
-            ACTION_TYPES.SOFTWARE_OPERATOR.START_RF.SHORT_DESCRIPTION,
-          actionDuration:
-            filters.droneHoverTime -
-            ACTION_TYPES.SOFTWARE_OPERATOR.START_RF.PRESET_DURATION -
-            ACTION_TYPES.SOFTWARE_OPERATOR.MOVE_DRONE_GIMBAL.PRESET_DURATION(
-              180
-            ) -
-            ACTION_TYPES.SOFTWARE_OPERATOR.MOVE_GND_GIMBAL.PRESET_DURATION(
-              180
-            ) -
-            ACTION_TYPES.SOFTWARE_OPERATOR.STOP_RF.PRESET_DURATION,
-        });
-
-        initialSchedulerState.SOFTWARE_OPERATOR[
-          initialSchedulerState.SOFTWARE_OPERATOR.length - 1
-        ].push({
-          actionType: ACTION_TYPES.SOFTWARE_OPERATOR.STOP_RF.NAME,
-          actionDescription:
-            ACTION_TYPES.SOFTWARE_OPERATOR.STOP_RF.SHORT_DESCRIPTION,
-          actionDuration:
-            ACTION_TYPES.SOFTWARE_OPERATOR.STOP_RF.PRESET_DURATION,
-        });
-
-        // DRIVER OPERATOR
-        initialSchedulerState.DRIVER_OPERATOR.push([
-          {
-            actionType: ACTION_TYPES.NO_ACTION.NAME,
-            actionDescription: ACTION_TYPES.NO_ACTION.SHORT_DESCRIPTION,
-            actionDuration: filters.droneHoverTime,
-          },
-        ]);
+        cntSteps = cntSteps + 1;
       }
     }
   }
+
+  return { initialSchedulerState };
+}
+
+function whileDroneHoverActions({
+  initialSchedulerState,
+  gndyaw,
+  gndpitch,
+  droneyaw,
+  dronepitch,
+  droneHoverTime,
+  locationNumber,
+  thisHeight,
+}) {
+  // DRONE OPERATOR
+  initialSchedulerState.DRONE_OPERATOR.push([
+    {
+      actionType: ACTION_TYPES.DRONE_OPERATOR.HOVER.NAME,
+      actionDescription: ACTION_TYPES.DRONE_OPERATOR.HOVER.SHORT_DESCRIPTION(
+        locationNumber,
+        thisHeight
+      ),
+      actionDuration: Number(droneHoverTime),
+    },
+  ]);
+
+  // SOFTWARE OPERATOR
+  initialSchedulerState.SOFTWARE_OPERATOR.push([
+    {
+      actionType: ACTION_TYPES.SOFTWARE_OPERATOR.MOVE_GND_GIMBAL.NAME,
+      actionDescription:
+        ACTION_TYPES.SOFTWARE_OPERATOR.MOVE_GND_GIMBAL.SHORT_DESCRIPTION(
+          gndyaw,
+          gndpitch
+        ),
+      actionDuration:
+        ACTION_TYPES.SOFTWARE_OPERATOR.MOVE_GND_GIMBAL.PRESET_DURATION(180),
+    },
+  ]);
+
+  initialSchedulerState.SOFTWARE_OPERATOR[
+    initialSchedulerState.SOFTWARE_OPERATOR.length - 1
+  ].push({
+    actionType: ACTION_TYPES.SOFTWARE_OPERATOR.MOVE_DRONE_GIMBAL.NAME,
+    actionDescription:
+      ACTION_TYPES.SOFTWARE_OPERATOR.MOVE_DRONE_GIMBAL.SHORT_DESCRIPTION(
+        droneyaw,
+        dronepitch
+      ),
+    actionDuration:
+      ACTION_TYPES.SOFTWARE_OPERATOR.MOVE_DRONE_GIMBAL.PRESET_DURATION(180),
+  });
+
+  initialSchedulerState.SOFTWARE_OPERATOR[
+    initialSchedulerState.SOFTWARE_OPERATOR.length - 1
+  ].push({
+    actionType: ACTION_TYPES.SOFTWARE_OPERATOR.START_RF.NAME,
+    actionDescription:
+      ACTION_TYPES.SOFTWARE_OPERATOR.START_RF.SHORT_DESCRIPTION,
+    actionDuration:
+      droneHoverTime -
+      ACTION_TYPES.SOFTWARE_OPERATOR.START_RF.PRESET_DURATION -
+      ACTION_TYPES.SOFTWARE_OPERATOR.MOVE_DRONE_GIMBAL.PRESET_DURATION(180) -
+      ACTION_TYPES.SOFTWARE_OPERATOR.MOVE_GND_GIMBAL.PRESET_DURATION(180) -
+      ACTION_TYPES.SOFTWARE_OPERATOR.STOP_RF.PRESET_DURATION,
+  });
+
+  initialSchedulerState.SOFTWARE_OPERATOR[
+    initialSchedulerState.SOFTWARE_OPERATOR.length - 1
+  ].push({
+    actionType: ACTION_TYPES.SOFTWARE_OPERATOR.STOP_RF.NAME,
+    actionDescription: ACTION_TYPES.SOFTWARE_OPERATOR.STOP_RF.SHORT_DESCRIPTION,
+    actionDuration: ACTION_TYPES.SOFTWARE_OPERATOR.STOP_RF.PRESET_DURATION,
+  });
+
+  // DRIVER OPERATOR
+  initialSchedulerState.DRIVER_OPERATOR.push([
+    {
+      actionType: ACTION_TYPES.NO_ACTION.NAME,
+      actionDescription: ACTION_TYPES.NO_ACTION.SHORT_DESCRIPTION,
+      actionDuration: droneHoverTime,
+    },
+  ]);
+
+  return initialSchedulerState;
 }
