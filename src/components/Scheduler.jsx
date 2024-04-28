@@ -4,10 +4,7 @@ import { convertSeconds } from "../logic/utils.js";
 import { NavigationBar } from "./NavigationBar.jsx";
 import { useContext } from "react";
 import { FiltersContext } from "../context/filters.jsx";
-import {
-  useMeasurementSeqCase1,
-  useMeasurementSeqOrderB,
-} from "../logic/scheduler.js";
+import { useMeasurementSeqOrderB } from "../logic/scheduler.js";
 
 export function Scheduler() {
   const { filters, setFiltersState } = useContext(FiltersContext);

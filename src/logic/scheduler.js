@@ -3,7 +3,13 @@ import { DroneMarkersContext } from "../context/dronemarkers.jsx";
 import { GroundMarkersContext } from "../context/groundmarkers.jsx";
 import { useContext } from "react";
 import { useFilters } from "../hooks/useFilters.js";
-import { cosineDistanceBetweenPoints } from "../logic/utils.js";
+import {
+  cosineDistanceBetweenPoints,
+  get_gnd_gimbal_pitch,
+  get_drone_gimbal_yaw,
+  get_gnd_gimbal_yaw,
+} from "../logic/utils.js";
+import { marker } from "leaflet";
 
 // Group of ordered simultaneous actions (GOSA)
 const GOSA = [
@@ -484,11 +490,11 @@ export function useMeasurementSeqOrderB() {
   const { markers } = useContext(DroneMarkersContext);
   const { gndmarkers } = useContext(GroundMarkersContext);
 
-  const { filters, getDroneGimbalYaw, getGNDGimbalYaw, getGndGimbalPitch } =
-    useFilters();
+  const { filters } = useFilters();
 
-  const droneYaws = getDroneGimbalYaw(markers, gndmarkers); //uses active ground
-  const gndPitches = getGndGimbalPitch(markers, gndmarkers);
+  let gnd_gimbal_pitch;
+  let drone_gimbal_yaw;
+  let gnd_gimbal_yaw;
 
   let initialSchedulerState = {
     DRONE_OPERATOR: [],
@@ -501,6 +507,11 @@ export function useMeasurementSeqOrderB() {
   let droneHeight = filters.droneHeights[0];
   let gndLocationNumber = 0;
   let droneHeightNumber = 0;
+  let droneHeightReversed = false;
+  let droneNextHeightNumber = 0;
+  let gndDirectionReversed = false;
+  let gndNextLocationNumber = 0;
+  let gndLocationDistIdx = 0;
 
   for (let d = 0; d < markers.length; d++) {
     for (let g = 0; g < gndmarkers.length; g++) {
@@ -516,7 +527,27 @@ export function useMeasurementSeqOrderB() {
             ) / filters.droneSpeed
           ).toFixed(1);
 
-          console.log(actionMoveDroneDuration);
+          gnd_gimbal_pitch = get_gnd_gimbal_pitch(
+            markers[0],
+            gndmarkers[0],
+            filters.droneHeights[0]
+          );
+
+          drone_gimbal_yaw = get_drone_gimbal_yaw(
+            markers[0],
+            gndmarkers[0],
+            markers[1],
+            0,
+            filters.droneHeadingType,
+            filters.droneHeights.length
+          );
+
+          gnd_gimbal_yaw = get_gnd_gimbal_yaw(
+            gndmarkers[0],
+            markers[0],
+            filters.poiGndHeading
+          );
+
           // DRONE OPERATOR
           initialSchedulerState.DRONE_OPERATOR.push([
             {
@@ -538,7 +569,7 @@ export function useMeasurementSeqOrderB() {
             {
               actionType: ACTION_TYPES.DRIVER_OPERATOR.MOVE.NAME,
               actionDescription:
-                ACTION_TYPES.DRIVER_OPERATOR.MOVE.SHORT_DESCRIPTION(g, g + 1),
+                ACTION_TYPES.DRIVER_OPERATOR.MOVE.SHORT_DESCRIPTION("any", 1),
               actionDuration: Number(actionMoveDroneDuration),
             },
           ]);
@@ -555,10 +586,10 @@ export function useMeasurementSeqOrderB() {
           // AFTER EACH MOVE ACTION DRONE DOES A HOVER ACTION AND THE SOFTWARE DOES MEASUREMENT ACTIONS
           initialSchedulerState = whileDroneHoverActions({
             initialSchedulerState: initialSchedulerState,
-            gndyaw: 99,
-            gndpitch: 99,
-            droneyaw: 99,
-            dronepitch: 99,
+            gndyaw: gnd_gimbal_yaw,
+            gndpitch: gnd_gimbal_pitch,
+            droneyaw: drone_gimbal_yaw,
+            dronepitch: -gnd_gimbal_pitch,
             droneHoverTime: filters.droneHoverTime,
             locationNumber: 1,
             thisHeight: filters.droneHeights[0],
@@ -591,7 +622,7 @@ export function useMeasurementSeqOrderB() {
 
           conditionStatement =
             conditionStatement +
-            `){droneHeightNumber = h;droneHeight = filters.droneHeights[droneHeightNumber];}else{droneHeightNumber = filters.droneHeights.length-1-h;droneHeight = filters.droneHeights[droneHeightNumber];}`;
+            `){droneHeightNumber = h;droneHeight = filters.droneHeights[droneHeightNumber];droneHeightReversed=false}else{droneHeightNumber = filters.droneHeights.length-1-h;droneHeight = filters.droneHeights[droneHeightNumber];droneHeightReversed=true}`;
 
           eval(conditionStatement);
 
@@ -622,9 +653,34 @@ export function useMeasurementSeqOrderB() {
 
           conditionStatement =
             conditionStatement +
-            `){gndLocationNumber = g;}else{gndLocationNumber = gndmarkers.length-1-g;}`;
+            `){gndLocationNumber = g;gndDirectionReversed=false;}else{gndLocationNumber = gndmarkers.length-1-g;gndDirectionReversed=true;}`;
 
           eval(conditionStatement);
+
+          // Get gimbal directions
+          gnd_gimbal_pitch = get_gnd_gimbal_pitch(
+            markers[d],
+            gndmarkers[gndLocationNumber],
+            droneHeight
+          );
+
+          console.log(d, markers.length, gndLocationNumber);
+          drone_gimbal_yaw = get_drone_gimbal_yaw(
+            markers[d],
+            gndmarkers[gndLocationNumber],
+            d === markers.length - 1
+              ? gndmarkers[gndLocationNumber]
+              : markers[d + 1],
+            d,
+            filters.droneHeadingType,
+            markers.length
+          );
+
+          gnd_gimbal_yaw = get_gnd_gimbal_yaw(
+            gndmarkers[gndLocationNumber],
+            markers[d],
+            filters.poiGndHeading
+          );
 
           if (
             cntSteps % (gndmarkers.length * filters.droneHeights.length) ===
@@ -669,20 +725,28 @@ export function useMeasurementSeqOrderB() {
             // AFTER EACH MOVE ACTION DRONE DOES A HOVER ACTION AND THE SOFTWARE DOES MEASUREMENT ACTIONS
             initialSchedulerState = whileDroneHoverActions({
               initialSchedulerState: initialSchedulerState,
-              gndyaw: 99,
-              gndpitch: 99,
-              droneyaw: 99,
-              dronepitch: 99,
+              gndyaw: gnd_gimbal_yaw,
+              gndpitch: gnd_gimbal_pitch,
+              droneyaw: drone_gimbal_yaw,
+              dronepitch: -gnd_gimbal_pitch,
               droneHoverTime: filters.droneHoverTime,
-              locationNumber: d,
+              locationNumber: d + 1,
               thisHeight: droneHeight,
             });
           } else if (
             cntSteps % filters.droneHeights.length === 0 &&
             cntSteps % (filters.droneHeights.length * gndmarkers.length) !== 0
           ) {
+            gndNextLocationNumber = gndDirectionReversed
+              ? gndLocationNumber + 1
+              : gndLocationNumber - 1;
+
+            gndLocationDistIdx = gndDirectionReversed
+              ? gndNextLocationNumber
+              : gndLocationNumber;
+
             actionMoveGndDuration = (
-              gndmarkers[gndLocationNumber].distToPrevious /
+              gndmarkers[gndLocationDistIdx].distToPrevious /
               (filters.gndSpeed * (1000 / 3600))
             ).toFixed(1);
 
@@ -701,7 +765,7 @@ export function useMeasurementSeqOrderB() {
                 actionType: ACTION_TYPES.DRIVER_OPERATOR.MOVE.NAME,
                 actionDescription:
                   ACTION_TYPES.DRIVER_OPERATOR.MOVE.SHORT_DESCRIPTION(
-                    gndLocationNumber,
+                    gndNextLocationNumber + 1,
                     gndLocationNumber + 1
                   ),
                 actionDuration: Number(actionMoveGndDuration),
@@ -720,18 +784,22 @@ export function useMeasurementSeqOrderB() {
             // AFTER EACH MOVE ACTION DRONE DOES A HOVER ACTION AND THE SOFTWARE DOES MEASUREMENT ACTIONS
             initialSchedulerState = whileDroneHoverActions({
               initialSchedulerState: initialSchedulerState,
-              gndyaw: 99,
-              gndpitch: 99,
-              droneyaw: 99,
-              dronepitch: 99,
+              gndyaw: gnd_gimbal_yaw,
+              gndpitch: gnd_gimbal_pitch,
+              droneyaw: drone_gimbal_yaw,
+              dronepitch: -gnd_gimbal_pitch,
               droneHoverTime: filters.droneHoverTime,
               locationNumber: d + 1,
               thisHeight: droneHeight,
             });
           } else if (cntSteps % filters.droneHeights.length !== 0) {
+            droneNextHeightNumber = droneHeightReversed
+              ? droneHeightNumber + 1
+              : droneHeightNumber - 1;
+
             actionMoveDroneDuration = (
               Math.abs(
-                droneHeight - filters.droneHeights[droneHeightNumber - 1]
+                droneHeight - filters.droneHeights[droneNextHeightNumber]
               ) / filters.droneSpeed
             ).toFixed(1);
 
@@ -742,7 +810,7 @@ export function useMeasurementSeqOrderB() {
                 actionDescription:
                   ACTION_TYPES.DRONE_OPERATOR.CHANGE_HEIGHT.SHORT_DESCRIPTION(
                     d + 1,
-                    filters.droneHeights[droneHeightNumber - 1],
+                    filters.droneHeights[droneNextHeightNumber],
                     droneHeight
                   ),
                 actionDuration: Number(actionMoveDroneDuration),
@@ -770,10 +838,10 @@ export function useMeasurementSeqOrderB() {
             // AFTER EACH CHANGE HEIGHT ACTION DRONE DOES A HOVER ACTION AND THE SOFTWARE DOES MEASUREMENT ACTIONS
             initialSchedulerState = whileDroneHoverActions({
               initialSchedulerState: initialSchedulerState,
-              gndyaw: 99,
-              gndpitch: 99,
-              droneyaw: 99,
-              dronepitch: 99,
+              gndyaw: gnd_gimbal_yaw,
+              gndpitch: gnd_gimbal_pitch,
+              droneyaw: drone_gimbal_yaw,
+              dronepitch: -gnd_gimbal_pitch,
               droneHoverTime: filters.droneHoverTime,
               locationNumber: d + 1,
               thisHeight: droneHeight,

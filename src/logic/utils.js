@@ -1,4 +1,6 @@
 import GeometryUtil from "leaflet-geometryutil";
+import { destination, bearing } from "leaflet-geometryutil";
+import { latLng } from "leaflet";
 
 export const DRAW_ACTION_TYPES = {
   ADD_MARKER: "ADD_MARKER",
@@ -234,3 +236,119 @@ export function convertSeconds(initial, seconds) {
 
   return `${hourFinal}:${minFinal}:${secFinal.toFixed(0)}`;
 }
+
+export const dists_drone_gnd = (drone_point, ground_point) => {
+  if (
+    drone_point !== null ||
+    drone_point !== undefined ||
+    ground_point !== null ||
+    ground_point !== undefined
+  ) {
+    return cosineDistanceBetweenPoints(
+      drone_point.lat,
+      drone_point.lng,
+      ground_point.lat,
+      ground_point.lng
+    ).toFixed(1);
+  } else {
+    return 0;
+  }
+};
+
+export const get_gnd_gimbal_pitch = (
+  drone_point,
+  ground_point,
+  drone_height
+) => {
+  if (
+    drone_point !== null ||
+    drone_point !== undefined ||
+    ground_point !== null ||
+    ground_point !== undefined ||
+    drone_height !== null ||
+    drone_height !== undefined
+  ) {
+    const dist = dists_drone_gnd(drone_point, ground_point);
+    return (
+      (Math.atan2(Number(drone_height), Number(dist)) * 180) /
+      Math.PI
+    ).toFixed(1);
+  } else {
+    return 0;
+  }
+};
+
+export const get_drone_gimbal_yaw = (
+  drone_point,
+  ground_point,
+  drone_next_point,
+  drone_point_idx,
+  drone_heading_type,
+  n_drone_points
+) => {
+  if (
+    drone_point === null ||
+    drone_point === undefined ||
+    ground_point === null ||
+    ground_point === undefined ||
+    drone_next_point === null ||
+    drone_next_point === undefined
+  ) {
+    return 0;
+  } else {
+    if (drone_heading_type === DRONE_HEADING_TYPES.NEXT_COORD) {
+      let nextCoords;
+      if (drone_point_idx < n_drone_points - 1) {
+        nextCoords = latLng(drone_next_point.lat, drone_next_point.lng);
+      } else {
+        nextCoords = latLng(ground_point.lat, ground_point.lng);
+      }
+
+      const groundCoords = latLng(ground_point.lat, ground_point.lng);
+      const thisCoords = latLng(drone_point.lat, drone_point.lng);
+
+      const droneHeadingBearing = drone_heading_to_next_marker(
+        thisCoords,
+        nextCoords
+      );
+
+      // SAVE THIS VALUE
+      const drone_gimbal_yaw_wrt_drone_head = drone_yaw_to_set(
+        thisCoords,
+        groundCoords,
+        droneHeadingBearing
+      );
+
+      return drone_gimbal_yaw_wrt_drone_head.toFixed(1);
+    } else if (drone_heading_type === DRONE_HEADING_TYPES.GROUND_NODE) {
+      return 0;
+    }
+  }
+};
+
+export const get_gnd_gimbal_yaw = (ground_point, drone_point, poi_point) => {
+  if (
+    drone_point === null ||
+    drone_point === undefined ||
+    ground_point === null ||
+    ground_point === undefined ||
+    poi_point === null ||
+    poi_point === undefined
+  ) {
+    return 0;
+  } else {
+    const thisCoords = latLng(ground_point.lat, ground_point.lng);
+    const poiCoords = latLng(poi_point[0], poi_point[1]);
+
+    const droneCoords = latLng(drone_point.lat, drone_point.lng);
+    const gndHeadingBearing = bearing(thisCoords, poiCoords);
+
+    const gnd_gimbal_yaw_wrt_gnd_head = gnd_yaw_to_set(
+      thisCoords,
+      droneCoords,
+      gndHeadingBearing
+    );
+
+    return gnd_gimbal_yaw_wrt_gnd_head.toFixed(1);
+  }
+};

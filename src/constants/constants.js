@@ -32,7 +32,7 @@ export const ACTION_TYPES = {
       SHORT_DESCRIPTION: (a, h) => `At location ${a} @ height ${h}`,
     },
     CHANGE_HEIGHT: {
-      NAME: "Move height drone",
+      NAME: "Change height drone",
       SHORT_DESCRIPTION: (a, h1, h2) =>
         `From h=${h1} to h=${h2} @ location ${a}`,
     },
