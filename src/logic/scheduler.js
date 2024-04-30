@@ -507,9 +507,9 @@ export function useMeasurementSeqOrderB() {
   let droneHeight = filters.droneHeights[0];
   let gndLocationNumber = 0;
   let droneHeightNumber = 0;
-  let droneHeightReversed = null;
+  let droneHeightReversed = false;
   let droneNextHeightNumber = 0;
-  let gndDirectionReversed = null;
+  let gndDirectionReversed = false;
   let gndNextLocationNumber = 0;
   let gndLocationDistIdx = 0;
 
@@ -624,6 +624,8 @@ export function useMeasurementSeqOrderB() {
             conditionStatement +
             `){droneHeightNumber = h;droneHeight = filters.droneHeights[droneHeightNumber];droneHeightReversed=false;}else{droneHeightNumber = filters.droneHeights.length-1-h;droneHeight = filters.droneHeights[droneHeightNumber];droneHeightReversed=true;}`;
 
+          console.log(droneHeightReversed);
+          console.log(gndDirectionReversed);
           eval(conditionStatement);
 
           /*
