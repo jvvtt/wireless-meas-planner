@@ -1,5 +1,4 @@
 import { MapToInteract } from "./components/MapToInteract";
-import { InfoCanvas } from "./components/InfoCanvas";
 import { PDRSZonesProvider } from "./context/pdrszones.jsx";
 import { saveAs } from "file-saver";
 import { Dashboard } from "./components/Dashboard.jsx";
@@ -9,7 +8,6 @@ import { NavigationBar } from "./components/NavigationBar.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { UserInputs } from "./components/UserInputs.jsx";
 
-const infoCavasDevelopment = false;
 const router = createBrowserRouter([
   {
     path: "/wireless-meas-planner/",
@@ -54,7 +52,6 @@ function MainPage() {
         <OpenInfo></OpenInfo>
         <PDRSZonesProvider>
           <MapToInteract></MapToInteract>
-          {infoCavasDevelopment && <InfoCanvas></InfoCanvas>}
           <UserInputs></UserInputs>
           <Dashboard></Dashboard>
         </PDRSZonesProvider>

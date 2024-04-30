@@ -7,7 +7,7 @@ export const FiltersContext = createContext();
 export function FiltersProvider({ children }) {
   const [filters, setFiltersState] = useState({
     droneSpeed: 0.1,
-    droneHeight: 40,
+    droneHeight: 0,
     droneHeights: [],
     gndSpeed: 10,
     droneHeadingType: DRONE_HEADING_TYPES.NEXT_COORD,

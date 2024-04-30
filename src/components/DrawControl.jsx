@@ -1,4 +1,10 @@
-import { useMap, FeatureGroup, Marker, CircleMarker } from "react-leaflet";
+import {
+  useMap,
+  FeatureGroup,
+  Marker,
+  CircleMarker,
+  Popup,
+} from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import { useContext } from "react";
 import { DroneMarkersContext } from "../context/dronemarkers.jsx";
@@ -17,6 +23,8 @@ export function DrawControl() {
     useContext(DroneMarkersContext);
   const { setFgVertex } = useContext(PDRSZonesContext);
   const { setFiltersState } = useFilters();
+
+  console.log(geo_map.getCenter(), geo_map.getZoom());
 
   const handleCreated = (e) => {
     // Drone marker
@@ -48,8 +56,16 @@ export function DrawControl() {
     }
   };
 
-  const handleEditMove = () => {
-    onEditMove(geo_map);
+  const handleEditMove = (e) => {
+    console.log(e);
+    if (e.layerType == "marker") {
+      console.log("here Drawcontrol");
+      if (e.layer.options.icon.myType === "Drone") {
+        onEditMove(geo_map);
+      } else if (e.layer.options.icon.myType === "POI-GND-HEAD") {
+        1;
+      }
+    }
   };
 
   const handleDelete = () => {
@@ -71,7 +87,7 @@ export function DrawControl() {
         draw={{ rectangle: false, polyline: true, circle: false }}
         position="topright"
         onCreated={(event) => handleCreated(event)}
-        onEditMove={(event) => handleEditMove(event)}
+        onEdited={(event) => handleEditMove(event)}
         onDeleted={(event) => handleDelete(event)}
       ></EditControl>
       <CustomToolbar
@@ -113,7 +129,9 @@ function AllMapComponents() {
               position={[marker.lat, marker.lng]}
               icon={droneIcon}
               eventHandlers={droneMarkerEventHandlers}
-            ></Marker>
+            >
+              <Popup>{`Drone location ${cnt + 1}`}</Popup>
+            </Marker>
           );
         })
       ) : (
@@ -126,7 +144,9 @@ function AllMapComponents() {
               key={cnt}
               center={[marker.lat, marker.lng]}
               pathOptions={{ color: "chocolate" }}
-            ></CircleMarker>
+            >
+              <Popup>{`Ground location ${cnt + 1}`}</Popup>
+            </CircleMarker>
           );
         })
       ) : (

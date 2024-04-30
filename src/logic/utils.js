@@ -13,29 +13,6 @@ export const DRONE_HEADING_TYPES = {
   GROUND_NODE: "ground-node",
 };
 
-export const handleHoverMarker = (event, n_states, id_marker, table_id) => {
-  // Show a tooltip with the order at which the marker was created
-
-  if (table_id.includes("drone")) {
-    event.target.editing._marker.bindTooltip(`DRONE at: ${n_states + 1}`);
-  } else if (table_id.includes("ground")) {
-    event.target.editing._shape.bindTooltip(`GROUND at: ${n_states + 1}`);
-  }
-
-  // Highlight the row of the table that corresponds to this marker
-  const mymarkers = document.querySelectorAll(`#${table_id} tbody tr`);
-
-  for (const [, rows] of Object.entries(mymarkers)) {
-    if (rows.children[0].innerText === `${id_marker}`) {
-      rows.style.backgroundColor = "rgb(255, 109, 25)";
-      rows.style.color = "#fff";
-    } else {
-      rows.style.backgroundColor = "";
-      rows.style.color = "#000";
-    }
-  }
-};
-
 /**
  *
  * @param {numeric} b - Bearing angle from drone to ground. Lies in [-180, 180]

@@ -8,6 +8,7 @@ import { useMeasurementSeqOrderB } from "../logic/scheduler.js";
 
 export function Scheduler() {
   const { filters, setFiltersState } = useContext(FiltersContext);
+
   const handleSetTime = (e) => {
     setFiltersState((prevState) => ({
       ...prevState,
@@ -15,9 +16,13 @@ export function Scheduler() {
     }));
   };
 
+  const schedulerNotReady =
+    filters.droneHeights.length === 0 || filters.poiGndHeading.length === 0;
+
   return (
     <>
       <NavigationBar></NavigationBar>
+
       <article className="flex flex-col mt-16 w-10/12 mx-auto">
         <header className="flex flex-row justify-between py-5 px-6 rounded">
           <div>
@@ -46,31 +51,62 @@ export function Scheduler() {
             />
           </div>
         </header>
+        {schedulerNotReady ? (
+          <MissingInputSection
+            heightsLength={filters.droneHeights.length}
+            poiLength={filters.poiGndHeading.length}
+          />
+        ) : (
+          <section className="flex flex-col my-10 pb-10">
+            <header className="rounded grid grid-cols-7 justify-between py-1 my-6 bg-slate-100">
+              <span className="font-bold text-center text-3xl mb-3 text-slate-500 col-span-1">
+                Actions time
+              </span>
 
-        <section className="flex flex-col my-10 pb-10">
-          <header className="rounded grid grid-cols-7 justify-between py-1 my-6 bg-slate-100">
-            <span className="font-bold text-center text-3xl mb-3 text-slate-500 col-span-1">
-              Actions time
-            </span>
+              <span className="font-bold text-center text-3xl mb-3 text-slate-500 col-span-2">
+                Drone Operator
+              </span>
 
-            <span className="font-bold text-center text-3xl mb-3 text-slate-500 col-span-2">
-              Drone Operator
-            </span>
+              <span className="font-bold text-center text-3xl mb-3 text-slate-500 col-span-2">
+                Software Operator
+              </span>
 
-            <span className="font-bold text-center text-3xl mb-3 text-slate-500 col-span-2">
-              Software Operator
-            </span>
-
-            <span className="font-bold text-center text-3xl mb-3 text-slate-500 col-span-2">
-              Van Operator
-            </span>
-          </header>
-          <RowCard
-            initialDatetime={filters.startMeasTime?.split("T")[1]}
-          ></RowCard>
-        </section>
+              <span className="font-bold text-center text-3xl mb-3 text-slate-500 col-span-2">
+                Van Operator
+              </span>
+            </header>
+            <RowCard
+              initialDatetime={filters.startMeasTime?.split("T")[1]}
+            ></RowCard>
+          </section>
+        )}
       </article>
     </>
+  );
+}
+
+function MissingInputSection({ heightsLength, poiLength }) {
+  return (
+    <section className="flex flex-col gap-y-4">
+      {heightsLength > 0 ? (
+        <span className="mt-12 text-slate-500 text-3xl font-bold">
+          You have entered at least one height
+        </span>
+      ) : (
+        <span className="mt-12 text-slate-500 text-3xl font-bold">
+          You have NOT entered at least one height
+        </span>
+      )}
+      {poiLength > 0 ? (
+        <span className="text-slate-500 text-3xl font-bold">
+          You have enter the POI reference for the ground gimbal
+        </span>
+      ) : (
+        <span className="text-slate-500 text-3xl font-bold">
+          You have NOT enter the POI reference for the ground gimbal
+        </span>
+      )}
+    </section>
   );
 }
 
