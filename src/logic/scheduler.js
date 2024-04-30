@@ -602,62 +602,53 @@ export function useMeasurementSeqOrderB() {
           CHECK DOCS ON THIS MEAS METHODOLOGY.
           */
 
-          let conditionStatement = `if (`;
+          let conditionForHeights = [];
 
           for (
             let cntIfStatements = 0;
             cntIfStatements < filters.droneHeights.length;
             cntIfStatements++
           ) {
-            if (cntIfStatements === filters.droneHeights.length - 1) {
-              conditionStatement =
-                conditionStatement +
-                `(cntSteps % (2*filters.droneHeights.length) === ${cntIfStatements})`;
-            } else {
-              conditionStatement =
-                conditionStatement +
-                `(cntSteps % (2*filters.droneHeights.length) === ${cntIfStatements}) ||`;
-            }
+            conditionForHeights.push(
+              cntSteps % (2 * filters.droneHeights.length) === cntIfStatements
+            );
           }
 
-          conditionStatement =
-            conditionStatement +
-            `){droneHeightNumber = h;droneHeight = filters.droneHeights[droneHeightNumber];droneHeightReversed=false;}else{droneHeightNumber = filters.droneHeights.length-1-h;droneHeight = filters.droneHeights[droneHeightNumber];droneHeightReversed=true;}`;
-
-          console.log(droneHeightReversed);
-          console.log(gndDirectionReversed);
-          Function(conditionStatement);
+          if (conditionForHeights.some((i) => i)) {
+            droneHeightNumber = h;
+            droneHeight = filters.droneHeights[droneHeightNumber];
+            droneHeightReversed = false;
+          } else {
+            droneHeightNumber = filters.droneHeights.length - 1 - h;
+            droneHeight = filters.droneHeights[droneHeightNumber];
+            droneHeightReversed = true;
+          }
 
           /*
           GET THE CORRECT GROUND LOCATIONs: GROUND MARKER INDEX "g" DOES NOT RETRIEVE THE CORRECT Ground Location FROM "gndmarkers" array
           CHECK DOCS ON THIS MEAS METHODOLOGY.
           */
-          conditionStatement = `if (`;
 
+          let conditionForGround = [];
           for (
             let cntIfStatements = 0;
             cntIfStatements < filters.droneHeights.length * gndmarkers.length;
             cntIfStatements++
           ) {
-            if (
-              cntIfStatements ===
-              filters.droneHeights.length * gndmarkers.length - 1
-            ) {
-              conditionStatement =
-                conditionStatement +
-                `(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === ${cntIfStatements})`;
-            } else {
-              conditionStatement =
-                conditionStatement +
-                `(cntSteps % (2*filters.droneHeights.length*gndmarkers.length) === ${cntIfStatements}) ||`;
-            }
+            conditionForGround.push(
+              cntSteps %
+                (2 * filters.droneHeights.length * gndmarkers.length) ===
+                cntIfStatements
+            );
           }
 
-          conditionStatement =
-            conditionStatement +
-            `){gndLocationNumber = g;gndDirectionReversed=false;}else{gndLocationNumber = gndmarkers.length-1-g;gndDirectionReversed=true;}`;
-
-          Function(conditionStatement);
+          if (conditionForGround.some((i) => i)) {
+            gndLocationNumber = g;
+            gndDirectionReversed = false;
+          } else {
+            gndLocationNumber = gndmarkers.length - 1 - g;
+            gndDirectionReversed = true;
+          }
 
           // Get gimbal directions
           gnd_gimbal_pitch = get_gnd_gimbal_pitch(
@@ -666,7 +657,6 @@ export function useMeasurementSeqOrderB() {
             droneHeight
           );
 
-          console.log(d, markers.length, gndLocationNumber);
           drone_gimbal_yaw = get_drone_gimbal_yaw(
             markers[d],
             gndmarkers[gndLocationNumber],

@@ -24,7 +24,6 @@ export function Filters() {
   };
 
   const handleAddValue = (e) => {
-    console.log(inputHeightValue);
     if (inputHeightValue.trim() !== "") {
       handleChangeHeightArray(inputHeightValue);
     }

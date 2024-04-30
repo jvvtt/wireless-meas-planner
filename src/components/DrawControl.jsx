@@ -24,7 +24,7 @@ export function DrawControl() {
   const { setFgVertex } = useContext(PDRSZonesContext);
   const { setFiltersState } = useFilters();
 
-  console.log(geo_map.getCenter(), geo_map.getZoom());
+  //console.log(geo_map.getCenter(), geo_map.getZoom());
 
   const handleCreated = (e) => {
     // Drone marker
@@ -57,9 +57,7 @@ export function DrawControl() {
   };
 
   const handleEditMove = (e) => {
-    console.log(e);
     if (e.layerType == "marker") {
-      console.log("here Drawcontrol");
       if (e.layer.options.icon.myType === "Drone") {
         onEditMove(geo_map);
       } else if (e.layer.options.icon.myType === "POI-GND-HEAD") {
