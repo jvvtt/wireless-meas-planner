@@ -626,7 +626,7 @@ export function useMeasurementSeqOrderB() {
 
           console.log(droneHeightReversed);
           console.log(gndDirectionReversed);
-          eval(conditionStatement);
+          Function(conditionStatement);
 
           /*
           GET THE CORRECT GROUND LOCATIONs: GROUND MARKER INDEX "g" DOES NOT RETRIEVE THE CORRECT Ground Location FROM "gndmarkers" array
@@ -657,7 +657,7 @@ export function useMeasurementSeqOrderB() {
             conditionStatement +
             `){gndLocationNumber = g;gndDirectionReversed=false;}else{gndLocationNumber = gndmarkers.length-1-g;gndDirectionReversed=true;}`;
 
-          eval(conditionStatement);
+          Function(conditionStatement);
 
           // Get gimbal directions
           gnd_gimbal_pitch = get_gnd_gimbal_pitch(
