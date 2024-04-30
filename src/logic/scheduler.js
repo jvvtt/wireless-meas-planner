@@ -622,7 +622,7 @@ export function useMeasurementSeqOrderB() {
 
           conditionStatement =
             conditionStatement +
-            `){droneHeightNumber = h;droneHeight = filters.droneHeights[droneHeightNumber];droneHeightReversed=false}else{droneHeightNumber = filters.droneHeights.length-1-h;droneHeight = filters.droneHeights[droneHeightNumber];droneHeightReversed=true}`;
+            `){droneHeightNumber = h;droneHeight = filters.droneHeights[droneHeightNumber];droneHeightReversed=false;}else{droneHeightNumber = filters.droneHeights.length-1-h;droneHeight = filters.droneHeights[droneHeightNumber];droneHeightReversed=true;}`;
 
           eval(conditionStatement);
 
