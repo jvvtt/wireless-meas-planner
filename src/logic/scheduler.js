@@ -507,9 +507,9 @@ export function useMeasurementSeqOrderB() {
   let droneHeight = filters.droneHeights[0];
   let gndLocationNumber = 0;
   let droneHeightNumber = 0;
-  let droneHeightReversed = false;
+  let droneHeightReversed = null;
   let droneNextHeightNumber = 0;
-  let gndDirectionReversed = false;
+  let gndDirectionReversed = null;
   let gndNextLocationNumber = 0;
   let gndLocationDistIdx = 0;
 
