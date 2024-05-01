@@ -68,12 +68,17 @@ export function Filters() {
   };
 
   return (
-    <>
-      <div className="grid grid-cols-2 bg-slate-100">
-        <div className="flex flex-row font-bold text-base justify-between rounded py-2 px-8 my-1 text-slate-500 gap-x-4">
-          <label htmlFor={droneSpeed} className="text-xl text-nowrap">
-            Drone speed
-          </label>
+    <div className="w-1/6 bg-slate-100 mt-8">
+      <div className="flex flex-col">
+        <div className="flex flex-col font-bold text-base justify-between rounded py-2 px-8 my-1 text-slate-500 gap-x-4">
+          <div className="flex flex-row justify-between">
+            <label htmlFor={droneSpeed} className="text-xl text-nowrap">
+              Drone speed
+            </label>
+            <span className="font-base text-xl text-slate-300 text-nowrap">
+              {filters.droneSpeed} m/s
+            </span>
+          </div>
           <input
             type="range"
             id={droneSpeed}
@@ -84,14 +89,16 @@ export function Filters() {
             value={filters.droneSpeed}
             className="appearance-none w-full my-auto h-6 bg-white outline-none opacity-60 transition-opacity hover:opacity-100 rounded"
           ></input>
-          <span className="font-base text-xl text-slate-300 text-nowrap">
-            {filters.droneSpeed} m/s
-          </span>
         </div>
-        <div className="flex flex-row font-bold text-base justify-between rounded py-2 px-8 my-1 text-slate-500 gap-x-4">
-          <label htmlFor={gndSpeed} className="text-xl text-nowrap">
-            Ground speed
-          </label>
+        <div className="flex flex-col font-bold text-base justify-between rounded py-2 px-8 my-1 text-slate-500 gap-x-4">
+          <div className="flex flex-row justify-between">
+            <label htmlFor={gndSpeed} className="text-xl text-nowrap">
+              Ground speed
+            </label>
+            <span className="font-base text-xl text-slate-300 text-nowrap">
+              {filters.gndSpeed} km/h
+            </span>
+          </div>
           <input
             type="range"
             step={1}
@@ -102,12 +109,9 @@ export function Filters() {
             value={filters.gndSpeed}
             className="appearance-none w-full my-auto h-6 bg-white outline-none opacity-60 transition-opacity hover:opacity-100 rounded"
           ></input>
-          <span className="font-base text-xl text-slate-300 text-nowrap">
-            {filters.gndSpeed} km/h
-          </span>
         </div>
       </div>
-      <section className="grid grid-cols-5 my-4 py-4 px-4 bg-slate-100 rounded">
+      <section className="flex flex-col my-4 py-4 px-4 rounded">
         <div className="flex flex-col font-bold text-base rounded justify-around px-4 my-1 text-slate-500">
           <label htmlFor="selector-head" className="text-xl">
             Heading drone
@@ -229,6 +233,6 @@ export function Filters() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

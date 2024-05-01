@@ -6,7 +6,8 @@ import { OpenInfo } from "./components/OpenInfo";
 import { Scheduler } from "./components/Scheduler.jsx";
 import { NavigationBar } from "./components/NavigationBar.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { UserInputs } from "./components/UserInputs.jsx";
+//import { UserInputs } from "./components/UserInputs.jsx";
+import { Filters } from "./components/Filters.jsx";
 
 const router = createBrowserRouter([
   {
@@ -46,16 +47,18 @@ function App() {
 
 function MainPage() {
   return (
-    <div className="bg-white mb-20">
+    <div className="bg-white">
       <NavigationBar></NavigationBar>
-      <div className="p-2 mx-auto max-w-screen-xl mt-5">
+      <PDRSZonesProvider>
         <OpenInfo></OpenInfo>
-        <PDRSZonesProvider>
-          <MapToInteract></MapToInteract>
-          <UserInputs></UserInputs>
-          <Dashboard></Dashboard>
-        </PDRSZonesProvider>
-      </div>
+        <div className="flex flex-row">
+          <Filters></Filters>
+          <div className="flex flex-col w-5/6 mx-auto px-20">
+            <MapToInteract></MapToInteract>
+            <Dashboard></Dashboard>
+          </div>
+        </div>
+      </PDRSZonesProvider>
     </div>
   );
 }

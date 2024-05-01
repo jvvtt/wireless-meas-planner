@@ -15,7 +15,7 @@ import { CoordsInfoCard } from "./CoordsInfoCard.jsx";
 
 export function MapToInteract() {
   return (
-    <>
+    <div>
       <div className="map-container rounded-lg shadow-lg">
         <MapContainer
           center={[60.16712, 24.939156]}
@@ -37,6 +37,6 @@ export function MapToInteract() {
         <CoordsInfoCard></CoordsInfoCard>
       </div>
       <MapLegends></MapLegends>
-    </>
+    </div>
   );
 }
