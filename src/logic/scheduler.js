@@ -518,12 +518,17 @@ export function useMeasurementSeqOrderB() {
       for (let h = 0; h < filters.droneHeights.length; h++) {
         // Special behaviour for first position
         if (cntSteps === 0) {
+          actionMoveDroneDuration = cosineDistanceBetweenPoints(
+            markers[0].lat,
+            markers[0].lng,
+            gndmarkers[0].lat,
+            gndmarkers[0].lng
+          );
+
           actionMoveDroneDuration = (
-            cosineDistanceBetweenPoints(
-              markers[0].lat,
-              markers[0].lng,
-              gndmarkers[0].lat,
-              gndmarkers[0].lng
+            Math.sqrt(
+              Math.pow(actionMoveDroneDuration, 2) +
+                Math.pow(filters.droneHeights[0], 2)
             ) / filters.droneSpeed
           ).toFixed(1);
 
@@ -846,7 +851,42 @@ export function useMeasurementSeqOrderB() {
     }
   }
 
-  return { initialSchedulerState };
+  const droneActionsDuration = initialSchedulerState.DRONE_OPERATOR.map(
+    (actions) => {
+      let acc = 0;
+      for (const [key, action] of Object.entries(actions)) {
+        acc = acc + action.actionDuration;
+      }
+      return acc;
+    }
+  );
+
+  const softwareActionsDuration = initialSchedulerState.SOFTWARE_OPERATOR.map(
+    (actions) => {
+      let acc = 0;
+      for (const [key, action] of Object.entries(actions)) {
+        acc = acc + action.actionDuration;
+      }
+      return acc;
+    }
+  );
+
+  const driverActionsDuration = initialSchedulerState.DRIVER_OPERATOR.map(
+    (actions) => {
+      let acc = 0;
+      for (const [key, action] of Object.entries(actions)) {
+        acc = acc + action.actionDuration;
+      }
+      return acc;
+    }
+  );
+
+  return {
+    initialSchedulerState,
+    droneActionsDuration,
+    softwareActionsDuration,
+    driverActionsDuration,
+  };
 }
 
 function whileDroneHoverActions({

@@ -3,7 +3,7 @@ import { PDRSZonesProvider } from "./context/pdrszones.jsx";
 import { saveAs } from "file-saver";
 import { Dashboard } from "./components/Dashboard.jsx";
 import { OpenInfo } from "./components/OpenInfo";
-import { Scheduler } from "./components/Scheduler.jsx";
+import { PageScheduler } from "./components/Scheduler.jsx";
 import { NavigationBar } from "./components/NavigationBar.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 //import { UserInputs } from "./components/UserInputs.jsx";
@@ -16,7 +16,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/wireless-meas-planner/scheduler",
-    element: <Scheduler />,
+    element: <PageScheduler />,
   },
 ]);
 
@@ -47,7 +47,7 @@ function App() {
 
 function MainPage() {
   return (
-    <div className="bg-white">
+    <div className="bg-slate-50">
       <NavigationBar></NavigationBar>
       <PDRSZonesProvider>
         <OpenInfo></OpenInfo>
