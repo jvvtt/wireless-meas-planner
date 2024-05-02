@@ -25,7 +25,7 @@ export function CoordsInfoCard() {
   const gndPitches = getGndGimbalPitch(markers, gndmarkers);
 
   return (
-    <section className="bg-white rounded border-collapse flex flex-col my-4 gap-y-3 w-4/12">
+    <section className="bg-white rounded border-collapse flex flex-col pt-5 gap-y-3 w-4/12">
       <div
         className="flex flex-row font-semibold text-base bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60"
         id="lat"
