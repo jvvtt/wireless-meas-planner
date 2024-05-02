@@ -50,10 +50,10 @@ function MainPage() {
     <div className="bg-slate-50">
       <NavigationBar></NavigationBar>
       <PDRSZonesProvider>
-        <OpenInfo></OpenInfo>
         <div className="flex flex-row">
           <Filters></Filters>
-          <div className="flex flex-col w-5/6 mx-auto px-20">
+          <div className="flex flex-col w-5/6 mx-auto px-20 pt-10">
+            <OpenInfo></OpenInfo>
             <MapToInteract></MapToInteract>
             <Dashboard></Dashboard>
           </div>

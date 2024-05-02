@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 export function NavigationBar() {
   return (
-    <nav className="flex flex-row justify-between gap-x-16 max-w-full w-screen h-26 bg-white">
+    <nav className="flex flex-row justify-between gap-x-16 max-w-full w-screen h-26 bg-white border-b-2">
       <img src={vtt_logo} alt="VTT logo" className="h-full max-h-full" />
       <div className="flex flex-col mx-2 py-1 mt-1">
         <Link to="/wireless-meas-planner/">
