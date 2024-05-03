@@ -310,7 +310,8 @@ export const get_gnd_gimbal_yaw = (ground_point, drone_point, poi_point) => {
     ground_point === null ||
     ground_point === undefined ||
     poi_point === null ||
-    poi_point === undefined
+    poi_point === undefined ||
+    poi_point.length === 0
   ) {
     return 0;
   } else {
