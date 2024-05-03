@@ -9,7 +9,7 @@ export function Filters() {
   return (
     <div className="w-1/6 bg-slate-100 pt-10">
       <SpeedFilters></SpeedFilters>
-      <section className="flex flex-col my-2 px-2 rounded gap-y-2">
+      <section className="flex flex-col my-2 rounded gap-y-2">
         <FlightPlanFilters></FlightPlanFilters>
         <MapUIFilters></MapUIFilters>
       </section>

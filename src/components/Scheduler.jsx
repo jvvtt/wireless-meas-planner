@@ -12,7 +12,7 @@ export function PageScheduler() {
     <>
       <NavigationBar></NavigationBar>
       <div className="flex flex-row bg-slate-50">
-        <div className="flex flex-col w-1/6 bg-slate-100 pt-20 pb-4 px-4 gap-y-2">
+        <div className="flex flex-col w-1/6 bg-slate-100 pt-10 pb-4 gap-y-2">
           <SpeedFilters></SpeedFilters>
           <FlightPlanFilters></FlightPlanFilters>
         </div>
@@ -36,7 +36,7 @@ function SchedulerContent() {
     filters.droneHeights.length === 0 || filters.poiGndHeading.length === 0;
 
   return (
-    <article className="flex flex-col mt-16 w-5/6 mx-auto px-16">
+    <article className="flex flex-col mt-16 w-5/6 mx-auto px-12">
       <header className="flex flex-row justify-between py-5 px-6 rounded">
         <div>
           <h1 className="text-left font-extrabold text-5xl text-slate-500">
