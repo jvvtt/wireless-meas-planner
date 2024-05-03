@@ -86,7 +86,7 @@ export function SpeedFilters() {
 function MapUIFilters() {
   const { setFiltersState } = useFilters();
   const { gndmarkers } = useContext(GroundMarkersContext);
-
+  ö;
   const handleDroneHeadingType = (event) => {
     setFiltersState((previousState) => ({
       ...previousState,
@@ -95,7 +95,9 @@ function MapUIFilters() {
   };
 
   const handleGndActive = (event) => {
+    console.log(event.target.value);
     if (event.target.value !== "no-gnd") {
+      console.log(event.target.selectedIndex);
       setFiltersState((previousState) => ({
         ...previousState,
         gndActiveIdx: event.target.selectedIndex,
