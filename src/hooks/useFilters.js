@@ -50,9 +50,15 @@ export function useFilters() {
       return Array(drone_points.length).fill(0);
     }
   };
+  
   const getDroneGimbalYaw = (drone_points, ground_points) => {
     const lengthDirections = 35;
-    if (filters.gndActiveIdx === null) {
+    if (filters.gndActiveIdx === null || 
+      drone_points.length === 0 ||
+      ground_points.length === 0 || 
+      drone_points === undefined || 
+      drone_points === null || 
+      ground_points === null || ground_points === undefined) {
       return drone_points.map((point) => ({
         droneGimbalYaw: 0,
         droneHeadingBearing: 0,
@@ -185,7 +191,8 @@ export function useFilters() {
       filters.gndActiveIdx === null ||
       filters.poiGndHeading.length === 0 ||
       drone_point === undefined ||
-      drone_point === null
+      drone_point === null ||
+      gnd_points.length === 0
     ) {
       gnd_info = {
         gndGimbalYaw: 0,

@@ -23,11 +23,11 @@ export function CoordsInfoCard() {
   const gndYaws = getGNDGimbalYaw(gndmarkers, markers[idxMarkerClicked]);
   const nodesDists = distsDroneGnd(markers, gndmarkers);
   const gndPitches = getGndGimbalPitch(markers, gndmarkers);
-
+  
   return (
-    <section className="bg-white rounded border-collapse flex flex-col pt-5 gap-y-3 w-4/12">
+    <section className="bg-white rounded border-collapse flex flex-col pt-2 gap-y-2 w-4/12">
       <div
-        className="flex flex-row font-semibold text-base bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60"
+        className="flex flex-row font-semibold text-sm bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60"
         id="lat"
       >
         <label htmlFor="lat-txt" className="text-align text-white">
@@ -37,7 +37,7 @@ export function CoordsInfoCard() {
           {markers[idxMarkerClicked]?.lat.toFixed(4)}
         </span>
       </div>
-      <div className="flex flex-row font-semibold text-base bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
+      <div className="flex flex-row font-semibold text-sm bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
         <label htmlFor="lng-txt" className="text-align text-white">
           Longitude
         </label>
@@ -45,7 +45,7 @@ export function CoordsInfoCard() {
           {markers[idxMarkerClicked]?.lng.toFixed(4)}
         </span>
       </div>
-      <div className="flex flex-row font-semibold text-base bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
+      <div className="flex flex-row font-semibold text-sm bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
         <label htmlFor="dtp-txt" className="text-align text-white">
           Distance to previous
         </label>
@@ -53,7 +53,7 @@ export function CoordsInfoCard() {
           {markers[idxMarkerClicked]?.distToPrevious.toFixed(1)}
         </span>
       </div>
-      <div className="flex flex-row font-semibold text-base bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
+      <div className="flex flex-row font-semibold text-sm bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
         <label htmlFor="ttp-txt" className="text-align text-white">
           Time to previous
         </label>
@@ -61,7 +61,7 @@ export function CoordsInfoCard() {
           {time[idxMarkerClicked]?.toFixed(2)}
         </span>
       </div>
-      <div className="flex flex-row font-semibold text-base bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
+      <div className="flex flex-row font-semibold text-sm bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
         <label htmlFor="drone-gimbal-yaw" className="text-align text-white">
           Drone gimbal yaw
         </label>
@@ -69,15 +69,15 @@ export function CoordsInfoCard() {
           {droneYaws[idxMarkerClicked]?.droneGimbalYaw?.toFixed(2)}
         </span>
       </div>
-      <div className="flex flex-row font-semibold text-base bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
+      <div className="flex flex-row font-semibold text-sm bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
         <label htmlFor="drone-gimbal-pitch" className="text-align text-white">
           Drone gimbal pitch
         </label>
         <span id="drone-gimbal-pitch" className="text-align text-white">
-          {-gndPitches[idxMarkerClicked]}
+          {-gndPitches[idxMarkerClicked] === NaN ? undefined : gndPitches[idxMarkerClicked]}
         </span>
       </div>
-      <div className="flex flex-row font-semibold text-base bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
+      <div className="flex flex-row font-semibold text-sm bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
         <label htmlFor="nodes-distance" className="text-align text-white">
           Nodes distance
         </label>
@@ -85,7 +85,7 @@ export function CoordsInfoCard() {
           {nodesDists[idxMarkerClicked]}
         </span>
       </div>
-      <div className="flex flex-row font-semibold text-base bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
+      <div className="flex flex-row font-semibold text-sm bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
         <label htmlFor="gnd-gimbal-yaw" className="text-align text-white">
           Gnd gimbal yaw
         </label>
@@ -93,12 +93,28 @@ export function CoordsInfoCard() {
           {gndYaws?.gndGimbalYaw?.toFixed(2)}
         </span>
       </div>
-      <div className="flex flex-row font-semibold text-base bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
+      <div className="flex flex-row font-semibold text-sm bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
         <label htmlFor="gnd-gimbal-pitch" className="text-align text-white">
           Gnd gimbal pitch
         </label>
         <span id="gnd-gimbal-pitch" className="text-align text-white">
           {gndPitches[idxMarkerClicked]}
+        </span>
+      </div>
+      <div className="flex flex-row font-semibold text-sm bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
+        <label htmlFor="gnd-gimbal-heading" className="text-align text-white">
+          Gnd gimbal heading
+        </label>
+        <span id="gnd-gimbal-yaw-heading" className="text-align text-white">
+          {gndYaws?.gndHeadingBearing?.toFixed(2)}
+        </span>
+      </div>
+      <div className="flex flex-row font-semibold text-sm bg-orange-400 rounded w-5/6 mx-auto py-2 justify-between px-4 shadow-md shadow-orange-400/60">
+        <label htmlFor="drone-gimbal-heading" className="text-align text-white">
+          Drone gimbal heading
+        </label>
+        <span id="drone-gimbal-heading" className="text-align text-white">
+          {droneYaws[idxMarkerClicked]?.droneHeadingBearing.toFixed(2)}
         </span>
       </div>
     </section>
